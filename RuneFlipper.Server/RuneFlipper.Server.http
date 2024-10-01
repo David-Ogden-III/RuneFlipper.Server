@@ -1,6 +1,0 @@
-@RuneFlipper.Server_HostAddress = http://localhost:5189
-
-GET {{RuneFlipper.Server_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
