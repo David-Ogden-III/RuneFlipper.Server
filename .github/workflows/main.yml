@@ -1,0 +1,24 @@
+name: Delete Azure Slot
+on:
+  pull_request:
+    branches:
+    - main
+    - dev
+    types: [closed]
+env:
+  AZURE_WEBAPP_NAME: RuneFlipperServe
+  SLOT_NAME: pr-${{ github.event.number }}
+  AZURE_RESOURCE_GROUP: runeflipperresourcegroup
+jobs:
+  delete_slot:
+    runs-on: ubuntu-latest
+    steps:
+    - name: login to AzureCLI
+      uses: azure/login@v2
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    - name: Delete Azure Slot
+      uses: azure/CLI@v2
+      with:
+        inlineScript: |
+          az webapp deployment slot delete --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --slot ${{ env.SLOT_NAME }}
