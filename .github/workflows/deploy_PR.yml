@@ -1,4 +1,4 @@
-name: Build and deploy pull request to Web App slot on RuneFlipperServer
+name: Build/Deploy PRs to main and dev
 on:
   pull_request:
     branches:
