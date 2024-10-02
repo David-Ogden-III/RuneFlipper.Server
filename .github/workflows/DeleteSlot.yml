@@ -21,4 +21,4 @@ jobs:
       uses: azure/CLI@v2
       with:
         inlineScript: |
-          az webapp deployment slot delete --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --slot ${{ env.SLOT_NAME }}
+          az webapp deployment slot delete --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --slot pr-${{ github.event.pull_request.number }}
