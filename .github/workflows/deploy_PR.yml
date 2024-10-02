@@ -52,6 +52,10 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build, set-up-test-env]
     steps:
+    - name: login to Azure
+      uses: azure/login@v2
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
     - name: Download artifact from build job
       uses: actions/download-artifact@v4
       with:
