@@ -6,7 +6,7 @@ on:
     - dev
     types: [closed]
 env:
-  AZURE_WEBAPP_NAME: RuneFlipperServe
+  AZURE_WEBAPP_NAME: RuneFlipperServer
   SLOT_NAME: pr-${{ github.event.number }}
   AZURE_RESOURCE_GROUP: runeflipperresourcegroup
 jobs:
