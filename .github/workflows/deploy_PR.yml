@@ -1,4 +1,4 @@
-name: Build/Deploy PRs to main and dev
+name: Build/Deploy PRs to slots for main and dev
 on:
   pull_request:
     branches:
