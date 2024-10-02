@@ -1,0 +1,62 @@
+name: Build and deploy pull request to Web App slot on RuneFlipperServer
+on:
+  pull_request:
+    branches:
+    - main
+    - dev
+env:
+  AZURE_WEBAPP_NAME: RuneFlipperServer
+  AZURE_WEBAPP_PACKAGE_PATH: RuneFlipper.Server/publish
+  CONFIGURATION: Release
+  DOTNET_CORE_VERSION: 8.0.x
+  WORKING_DIRECTORY: RuneFlipper.Server
+  SLOT_NAME: pr-${{ github.event.number }}
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_CORE_VERSION }}
+    - name: Restore
+      run: dotnet restore "${{ env.WORKING_DIRECTORY }}"
+    - name: Build
+      run: dotnet build "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} --no-restore
+    - name: Test
+      run: dotnet test "${{ env.WORKING_DIRECTORY }}" --no-build
+    - name: Publish
+      run: dotnet publish "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} --no-build --output "${{ env.AZURE_WEBAPP_PACKAGE_PATH }}"
+    - name: Publish Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: webapp
+        path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+        
+  set-up-test-env:
+    name: Create test env
+    runs-on: ubuntu-latest
+    steps:
+    - name: Create Azure Slot
+      uses: azure/CLI@v2
+      with:
+        inlineScript: |
+          az webapp deployment slot create --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group runeflipperresourcegroup --slot ${{ env.SLOT_NAME }}
+        
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [build, set-up-test-env]
+    steps:
+    - name: Download artifact from build job
+      uses: actions/download-artifact@v4
+      with:
+        name: webapp
+        path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+    - name: Deploy to Azure WebApp Slot
+      uses: azure/webapps-deploy@v3
+      with:
+        app-name: ${{ env.AZURE_WEBAPP_NAME }}
+        publish-profile: ${{ secrets.RuneFlipperServer_D740 }}
+        package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+        slot-name: ${{ env.SLOT_NAME }}
