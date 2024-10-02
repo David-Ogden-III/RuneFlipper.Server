@@ -38,6 +38,10 @@ jobs:
     name: Create test env
     runs-on: ubuntu-latest
     steps:
+    - name: login to AzureCLI
+      uses: azure/login@v2
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
     - name: Create Azure Slot
       uses: azure/CLI@v2
       with:
