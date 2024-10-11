@@ -59,7 +59,7 @@ jobs:
 
     - name: Set environment variable for Azure Slot
       run: |
-        az webapp config connection-string set -n ${{ env.AZURE_WEBAPP_NAME }} -g rf-ResourceGroup -s ${{ env.SLOT_NAME }} --settings RuneFlipper:Prod=${{ secrets.DEV_CONNECTIONSTRING }} -t postgresql
+        az webapp config connection-string set -n ${{ env.AZURE_WEBAPP_NAME }} -g rf-ResourceGroup -s ${{ env.SLOT_NAME }} --slot-settings RuneFlipper:Prod=${{ secrets.DEV_CONNECTIONSTRING }} -t postgresql
         
   deploy:
     runs-on: ubuntu-latest
