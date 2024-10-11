@@ -40,6 +40,7 @@ jobs:
   set-up-test-env:
     name: Create test env
     runs-on: ubuntu-latest
+    needs: build
     
     steps:
     - name: login to AzureCLI
@@ -52,6 +53,9 @@ jobs:
       with:
         inlineScript: |
           az webapp deployment slot create --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group rf-ResourceGroup --slot ${{ env.SLOT_NAME }}
+
+    - name: Wait for slot to be ready
+      run: sleep 10
 
     - name: Set environment variable for Azure Slot
       run: |
