@@ -52,6 +52,10 @@ jobs:
       with:
         inlineScript: |
           az webapp deployment slot create --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group rf-ResourceGroup --slot ${{ env.SLOT_NAME }}
+
+    - name: Set environment variable for Azure Slot
+      run: |
+        az webapp config appsettings set --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group rf-ResourceGroup --slot ${{ env.SLOT_NAME }} --settings RuneFlipper:Prod=${{ secrets.DEV_CONNECTIONSTRING }}
         
   deploy:
     runs-on: ubuntu-latest
