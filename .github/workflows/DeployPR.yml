@@ -54,9 +54,6 @@ jobs:
         inlineScript: |
           az webapp deployment slot create --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group rf-ResourceGroup --slot ${{ env.SLOT_NAME }}
 
-    - name: Wait for slot to be ready
-      run: sleep 10
-
     - name: Set environment variable for Azure Slot
       run: |
         az webapp config connection-string set -g rf-ResourceGroup -n ${{ env.AZURE_WEBAPP_NAME }} -s ${{ env.SLOT_NAME }} -t postgresql --settings "RuneFlipper:Prod=${{ secrets.DEV_CONNECTIONSTRING }}"
