@@ -37,30 +37,30 @@ jobs:
           name: .net-app
           path: ${{env.DOTNET_ROOT}}/myapp
         
-  # set-up-test-env:
-  #   name: Create test env
-  #   runs-on: ubuntu-latest
-  #   needs: build
+  set-up-test-env:
+    name: Create test env
+    runs-on: ubuntu-latest
+    needs: build
     
-  #   steps:
-  #   - name: login to AzureCLI
-  #     uses: azure/login@v2
-  #     with:
-  #       creds: ${{ secrets.AZURE_CREDENTIALS }}
+    steps:
+    - name: login to AzureCLI
+      uses: azure/login@v2
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
           
-  #   - name: Create Azure Slot
-  #     uses: azure/CLI@v2
-  #     with:
-  #       inlineScript: |
-  #         az webapp deployment slot create --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group rf-ResourceGroup --slot ${{ env.SLOT_NAME }}
+    - name: Create Azure Slot
+      uses: azure/CLI@v2
+      with:
+        inlineScript: |
+          az webapp deployment slot create --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group rf-ResourceGroup --slot ${{ env.SLOT_NAME }}
 
-  #   - name: Set environment variable for Azure Slot
-  #     run: |
-  #       az webapp config connection-string set -g rf-ResourceGroup -n ${{ env.AZURE_WEBAPP_NAME }} -s ${{ env.SLOT_NAME }} -t postgresql --settings "RuneFlipperDb=${{ secrets.DEV_CONNECTIONSTRING }}"
+    - name: Set environment variable for Azure Slot
+      run: |
+        az webapp config connection-string set -g rf-ResourceGroup -n ${{ env.AZURE_WEBAPP_NAME }} -s ${{ env.SLOT_NAME }} -t postgresql --settings "RuneFlipperDb=${{ secrets.DEV_CONNECTIONSTRING }}"
         
   deploy:
     runs-on: ubuntu-latest
-    needs: build
+    needs: [build, set-up-test-env]
     
     steps:
     - name: login to Azure
@@ -79,4 +79,3 @@ jobs:
         app-name: 'RuneFlipperServer'
         package: .
         slot-name: ${{ env.SLOT_NAME }}
-        connection-string: ${{ secrets.DEV_CONNECTIONSTRING }}
