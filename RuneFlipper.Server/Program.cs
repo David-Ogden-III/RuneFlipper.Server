@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Npgsql;
 using RuneFlipper.Server.DAL;
 using RuneFlipper.Server.Models;
 
@@ -11,12 +10,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-//var connectionString = builder.Configuration.GetConnectionString("RuneFlipperDb");
-
-var connectionStringBuilder = new NpgsqlConnectionStringBuilder(
-    builder.Configuration.GetConnectionString("RuneFlipperDb"));
-
-var connectionString = connectionStringBuilder.ConnectionString;
+var connectionString = builder.Configuration.GetConnectionString("RuneFlipperDb");
+Console.WriteLine(connectionString);
 
 builder.Services.AddDbContext<RuneFlipperContext>(options =>
                 options.UseNpgsql(connectionString));
