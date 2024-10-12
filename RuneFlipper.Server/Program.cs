@@ -10,8 +10,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+var connectionString = builder.Configuration.GetConnectionString("RuneFlipperDb");
+
 builder.Services.AddDbContext<RuneFlipperContext>(options =>
-                options.UseNpgsql(builder.Configuration.GetConnectionString("RuneFlipperDb")));
+                options.UseNpgsql(connectionString));
 
 builder.Services.AddIdentityApiEndpoints<User>()
     .AddRoles<IdentityRole>()
