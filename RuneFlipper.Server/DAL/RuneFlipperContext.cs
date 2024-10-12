@@ -29,9 +29,6 @@ public partial class RuneFlipperContext : IdentityDbContext<User>
 
     public virtual DbSet<Trade> Trades { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseNpgsql("Name=ConnectionStrings:RuneFlipperDb");
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
