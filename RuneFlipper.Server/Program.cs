@@ -11,7 +11,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<RuneFlipperContext>(options =>
-                options.UseNpgsql("Name=ConnectionStrings:RuneFlipperDb"));
+                options.UseNpgsql(builder.Configuration.GetConnectionString("RuneFlipperDb")));
 
 builder.Services.AddIdentityApiEndpoints<User>()
     .AddRoles<IdentityRole>()
