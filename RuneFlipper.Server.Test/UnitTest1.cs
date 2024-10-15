@@ -5,6 +5,7 @@ namespace RuneFlipper.Server.Test
         [Fact]
         public void Test1()
         {
+            //comment
             Assert.True(true);
         }
     }
