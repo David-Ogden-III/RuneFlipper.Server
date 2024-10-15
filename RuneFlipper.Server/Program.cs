@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Models.Entities;
 using RuneFlipper.Server.DAL;
-using RuneFlipper.Server.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +9,7 @@ builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
 
 var connectionString = builder.Configuration.GetConnectionString("RuneFlipperDb");
 Console.WriteLine(connectionString);
