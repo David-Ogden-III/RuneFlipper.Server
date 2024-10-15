@@ -20,13 +20,13 @@ jobs:
           dotnet-version: '8.x'
 
       - name: Restore
-        run: dotnet restore 
+        run: dotnet restore ./RuneFlipper.Server.sln
 
       - name: Build with dotnet
-        run: dotnet build --configuration Release
+        run: dotnet build ./RuneFlipper.Server.sln --configuration Release --no-restore
 
       - name: Test
-        run: dotnet test --no-build -c Release
+        run: dotnet test ./RuneFlipper.Server.sln -c Release --no-build
 
       - name: dotnet publish
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
