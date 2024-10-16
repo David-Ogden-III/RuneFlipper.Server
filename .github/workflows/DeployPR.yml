@@ -29,13 +29,13 @@ jobs:
         run: dotnet test --no-build -c Release
 
       - name: dotnet publish
-        run: dotnet publish ./RuneFlipper.Server/RuneFlipper.Server.csproj -c Release -o ${{env.DOTNET_ROOT}}/myapp
+        run: dotnet publish ./RuneFlipper.Server/RuneFlipper.Server.csproj -c Release -o ./publish
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: .net-app
-          path: ${{env.DOTNET_ROOT}}/myapp
+          path: ./publish
         
   set-up-test-env:
     name: Create test env
@@ -72,10 +72,11 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: .net-app
+        path: ./publish
         
     - name: Deploy to Azure WebApp Slot
       uses: azure/webapps-deploy@v3
       with:
         app-name: 'RuneFlipperServer'
-        package: .
+        package: ./publish
         slot-name: ${{ env.SLOT_NAME }}
