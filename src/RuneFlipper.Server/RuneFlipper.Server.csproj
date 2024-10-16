@@ -29,4 +29,9 @@
     <Folder Include="DAL\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Controllers\Controllers.csproj" />
+    <ProjectReference Include="..\Models\Models.csproj" />
+  </ItemGroup>
+
 </Project>
