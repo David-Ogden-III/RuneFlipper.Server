@@ -11,6 +11,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MailService", "src\MailServ
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Controllers", "src\Controllers\Controllers.csproj", "{09326F58-171C-4A8F-BBE3-4B1CD255D2FA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RuneFlipper.Server.Test", "test\RuneFlipper.Server.Test\RuneFlipper.Server.Test.csproj", "{61B4C13D-C5B9-4E3E-AD56-B4D9128F9C43}"
+	ProjectSection(ProjectDependencies) = postProject
+		{09326F58-171C-4A8F-BBE3-4B1CD255D2FA} = {09326F58-171C-4A8F-BBE3-4B1CD255D2FA}
+		{1208CD1F-288A-4DCC-8A04-968F0A375218} = {1208CD1F-288A-4DCC-8A04-968F0A375218}
+		{3CF70D9D-4630-42A6-AB89-000016EE2C73} = {3CF70D9D-4630-42A6-AB89-000016EE2C73}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +40,10 @@ Global
 		{09326F58-171C-4A8F-BBE3-4B1CD255D2FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{09326F58-171C-4A8F-BBE3-4B1CD255D2FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{09326F58-171C-4A8F-BBE3-4B1CD255D2FA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{61B4C13D-C5B9-4E3E-AD56-B4D9128F9C43}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{61B4C13D-C5B9-4E3E-AD56-B4D9128F9C43}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{61B4C13D-C5B9-4E3E-AD56-B4D9128F9C43}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{61B4C13D-C5B9-4E3E-AD56-B4D9128F9C43}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,9 +1,11 @@
 name: Deploy PR to Slot
+
 on:
   pull_request:
     branches:
     - main
     - dev
+
 env:
   AZURE_WEBAPP_NAME: RuneFlipperServer
   SLOT_NAME: pr-${{ github.event.number }}
@@ -20,22 +22,22 @@ jobs:
           dotnet-version: '8.x'
 
       - name: Restore
-        run: dotnet restore 
+        run: dotnet restore ./src/RuneFlipper.Server
 
       - name: Build with dotnet
-        run: dotnet build --configuration Release
+        run: dotnet build ./src/RuneFlipper.Server --configuration Release --no-restore
 
       - name: Test
-        run: dotnet test --no-build
+        run: dotnet test ./test/RuneFlipper.Server.Test --configuration Release
 
       - name: dotnet publish
-        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+        run: dotnet publish ./src/RuneFlipper.Server --configuration Release --no-restore --output './publish'
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: .net-app
-          path: ${{env.DOTNET_ROOT}}/myapp
+          path: ./publish
         
   set-up-test-env:
     name: Create test env
@@ -72,10 +74,11 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: .net-app
+        path: ./publish
         
     - name: Deploy to Azure WebApp Slot
       uses: azure/webapps-deploy@v3
       with:
         app-name: 'RuneFlipperServer'
-        package: .
+        package: ./publish
         slot-name: ${{ env.SLOT_NAME }}
