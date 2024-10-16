@@ -28,7 +28,7 @@ jobs:
         run: dotnet build ./src/RuneFlipper.Server --configuration Release --no-restore
 
       - name: Test
-        run: dotnet test ./src/RuneFlipper.Server --configuration Release --no-restore --verbosity normal
+        run: dotnet test ./test/RuneFlipper.Server.Test --configuration Release --verbosity normal
 
       - name: dotnet publish
         run: dotnet publish ./src/RuneFlipper.Server --configuration Release --no-restore --output './publish'
