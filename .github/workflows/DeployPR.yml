@@ -56,9 +56,13 @@ jobs:
         inlineScript: |
           az webapp deployment slot create --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group rf-ResourceGroup --slot ${{ env.SLOT_NAME }}
 
-    - name: Set environment variable for Azure Slot
+    - name: Set DB Connection String for Azure Slot
       run: |
         az webapp config connection-string set -g rf-ResourceGroup -n ${{ env.AZURE_WEBAPP_NAME }} -s ${{ env.SLOT_NAME }} -t custom --settings "RuneFlipperDb=${{ secrets.DEV_CONNECTIONSTRING }}"
+
+    - name: Set SendGrid Key for Azure Slot
+      run: |
+        az webapp config appsettings set -g rf-ResourceGroup -n ${{ env.AZURE_WEBAPP_NAME }} -s ${{ env.SLOT_NAME }} --settings "SENDGRID_API_KEY=${{ secrets.SENDGRID_API_KEY }}"
         
   deploy:
     runs-on: ubuntu-latest
