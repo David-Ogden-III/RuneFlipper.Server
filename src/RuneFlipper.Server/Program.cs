@@ -1,4 +1,6 @@
+using MailService;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Models.Entities;
 using RuneFlipper.Server.DAL;
@@ -23,9 +25,12 @@ builder.Services.AddIdentityApiEndpoints<User>()
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
-    options.SignIn.RequireConfirmedEmail = false;
+    options.SignIn.RequireConfirmedEmail = true;
     options.User.RequireUniqueEmail = true;
 });
+
+builder.Services.AddTransient<IEmailSender, MailSender>();
+builder.Services.Configure<MailSenderOptions>(builder.Configuration);
 
 var app = builder.Build();
 
