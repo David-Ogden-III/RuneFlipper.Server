@@ -16,20 +16,26 @@ public class GenericRepository<TEntity> where TEntity : class
         _dbSet = context.Set<TEntity>();
     }
 
-    public virtual async Task<ICollection<TEntity>> Get(IEnumerable<Expression<Func<TEntity,
-        bool>>> filters, IEnumerable<string> tablesToJoin,
+    public virtual async Task<ICollection<TEntity>> Get(IEnumerable<Expression<Func<TEntity,bool>>>? filters = null,
+        IEnumerable<string>? tablesToJoin = null,
         Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null)
     {
         IQueryable<TEntity> query = _dbSet;
 
-        foreach (var filter in filters)
+        if (filters != null)
         {
-            query = query.Where(filter);
+            foreach (var filter in filters)
+            {
+                query = query.Where(filter);
+            }
         }
-
-        foreach (var table in tablesToJoin)
+        
+        if (tablesToJoin != null)
         {
-            query = query.Include(table);
+            foreach (var table in tablesToJoin)
+            {
+                query = query.Include(table);
+            }
         }
 
         List<TEntity> result;
