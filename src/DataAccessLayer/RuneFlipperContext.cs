@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Models.Entities;
 
-namespace RuneFlipper.Server.DAL;
+namespace DataAccessLayer;
 
 public partial class RuneFlipperContext : IdentityDbContext<User>
 {
@@ -24,7 +24,6 @@ public partial class RuneFlipperContext : IdentityDbContext<User>
     public virtual DbSet<Mode> Modes { get; set; }
 
     public virtual DbSet<Selltype> Selltypes { get; set; }
-
     public virtual DbSet<Trade> Trades { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -72,7 +71,6 @@ public partial class RuneFlipperContext : IdentityDbContext<User>
 
             entity.HasOne(d => d.SellType).WithMany(p => p.Trades).HasConstraintName("trades_selltypeid_fkey");
         });
-
         OnModelCreatingPartial(modelBuilder);
     }
 
