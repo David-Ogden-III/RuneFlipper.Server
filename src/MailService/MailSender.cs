@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Identity.UI.Services;
-using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SendGrid;
@@ -27,7 +26,7 @@ public class MailSender : IEmailSender
         await Execute(Options.SendGridKey, subject, message, toEmail);
     }
 
-    public async Task Execute(string apiKey,  string subject, string message, string toEmail)
+    public async Task Execute(string apiKey, string subject, string message, string toEmail)
     {
         var client = new SendGridClient(apiKey);
 
@@ -40,7 +39,7 @@ public class MailSender : IEmailSender
         };
 
         msg.AddTo(new EmailAddress(toEmail));
-        msg.SetClickTracking(false,false);
+        msg.SetClickTracking(false, false);
 
         var response = await client.SendEmailAsync(msg);
 

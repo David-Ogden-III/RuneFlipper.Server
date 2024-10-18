@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
-using Models.Entities;
+﻿using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace DataAccessLayer;
@@ -16,7 +14,7 @@ public class GenericRepository<TEntity> where TEntity : class
         _dbSet = context.Set<TEntity>();
     }
 
-    public virtual async Task<ICollection<TEntity>> GetListAsync(IEnumerable<Expression<Func<TEntity,bool>>>? filters = null,
+    public virtual async Task<ICollection<TEntity>> GetListAsync(IEnumerable<Expression<Func<TEntity, bool>>>? filters = null,
         IEnumerable<string>? tablesToJoin = null,
         Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null)
     {
@@ -29,7 +27,7 @@ public class GenericRepository<TEntity> where TEntity : class
                 query = query.Where(filter);
             }
         }
-        
+
         if (tablesToJoin != null)
         {
             foreach (var table in tablesToJoin)
@@ -73,7 +71,7 @@ public class GenericRepository<TEntity> where TEntity : class
         }
 
         TEntity result = await query.FirstAsync();
-        
+
         return result;
     }
 
