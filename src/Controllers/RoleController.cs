@@ -30,7 +30,7 @@ public class RoleController : ControllerBase
     public async Task<ActionResult<RoleResponse>> Get()
     {
         var roles = await _unitOfWork.RoleRepository.GetListAsync();
-        var response = ObjectMapper.CreateFetchRoleResponses(roles);
+        var response = ObjectMapper.CreateRoleResponses(roles);
 
         return Ok(response);
     }
@@ -53,7 +53,7 @@ public class RoleController : ControllerBase
 
             if (success)
             {
-                RoleResponse response = ObjectMapper.CreateFetchRoleResponse(roleToAdd);
+                RoleResponse response = ObjectMapper.CreateRoleResponse(roleToAdd);
                 return CreatedAtAction(nameof(Create), response);
             }
 
@@ -77,7 +77,7 @@ public class RoleController : ControllerBase
 
             if (success)
             {
-                RoleResponse response = ObjectMapper.CreateFetchRoleResponse(roleToDelete);
+                RoleResponse response = ObjectMapper.CreateRoleResponse(roleToDelete);
                 return Ok(response);
             }
 
