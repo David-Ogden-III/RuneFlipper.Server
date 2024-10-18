@@ -16,7 +16,7 @@ public class GenericRepository<TEntity> where TEntity : class
         _dbSet = context.Set<TEntity>();
     }
 
-    public virtual async Task<ICollection<TEntity>> Get(IEnumerable<Expression<Func<TEntity,bool>>>? filters = null,
+    public virtual async Task<ICollection<TEntity>> GetListAsync(IEnumerable<Expression<Func<TEntity,bool>>>? filters = null,
         IEnumerable<string>? tablesToJoin = null,
         Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null)
     {
@@ -51,6 +51,32 @@ public class GenericRepository<TEntity> where TEntity : class
         return result;
     }
 
+    public virtual async Task<TEntity> GetAsync(IEnumerable<Expression<Func<TEntity, bool>>>? filters = null,
+        IEnumerable<string>? tablesToJoin = null)
+    {
+        IQueryable<TEntity> query = _dbSet;
+
+        if (filters != null)
+        {
+            foreach (var filter in filters)
+            {
+                query = query.Where(filter);
+            }
+        }
+
+        if (tablesToJoin != null)
+        {
+            foreach (var table in tablesToJoin)
+            {
+                query = query.Include(table);
+            }
+        }
+
+        TEntity result = await query.FirstAsync();
+        
+        return result;
+    }
+
     public virtual void Insert(TEntity entity)
     {
         _dbSet.Attach(entity);
@@ -73,7 +99,4 @@ public class GenericRepository<TEntity> where TEntity : class
         bool entityExists = _dbSet.Any(predicate);
         return entityExists;
     }
-
-
-
 }
