@@ -77,6 +77,11 @@ public class UnitOfWork(RuneFlipperContext context) : IDisposable
         }
     }
 
+    public async Task SaveAsync()
+    {
+        await _context.SaveChangesAsync();
+    }
+
     private bool disposed = false;
 
     protected virtual void Dispose(bool disposing)
