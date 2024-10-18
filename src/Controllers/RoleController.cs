@@ -56,7 +56,7 @@ public class RoleController : ControllerBase
                 RoleResponse response = ObjectMapper.CreateFetchRoleResponse(roleToAdd);
                 return CreatedAtAction(nameof(Create), response);
             }
-            
+
             return BadRequest();
         }
         catch (Exception ex)
