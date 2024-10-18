@@ -5,12 +5,12 @@ namespace Models;
 
 public static class ObjectMapper
 {
-    public static IEnumerable<FetchRoleResponse> CreateFetchRoleResponses(IEnumerable<IdentityRole> roles)
+    public static IEnumerable<RoleResponse> CreateFetchRoleResponses(IEnumerable<IdentityRole> roles)
     {
-        List<FetchRoleResponse> responseObjects = [];
+        List<RoleResponse> responseObjects = [];
         foreach (var role in roles)
         {
-            FetchRoleResponse newResponse = new()
+            RoleResponse newResponse = new()
             {
                 Id = role.Id,
                 Name = role.Name ?? String.Empty
@@ -21,10 +21,10 @@ public static class ObjectMapper
         return responseObjects;
     }
 
-    public static FetchRoleResponse CreateFetchRoleResponse(IdentityRole role)
+    public static RoleResponse CreateFetchRoleResponse(IdentityRole role)
     {
 
-        FetchRoleResponse newResponse = new()
+        RoleResponse newResponse = new()
         {
             Id = role.Id,
             Name = role.Name ?? String.Empty

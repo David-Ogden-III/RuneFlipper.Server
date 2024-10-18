@@ -27,7 +27,7 @@ public class RoleController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<FetchRoleResponse>> Get()
+    public async Task<ActionResult<RoleResponse>> Get()
     {
         var roles = await _unitOfWork.RoleRepository.GetListAsync();
         var response = ObjectMapper.CreateFetchRoleResponses(roles);
@@ -53,7 +53,7 @@ public class RoleController : ControllerBase
 
             if (success)
             {
-                FetchRoleResponse response = ObjectMapper.CreateFetchRoleResponse(roleToAdd);
+                RoleResponse response = ObjectMapper.CreateFetchRoleResponse(roleToAdd);
                 return CreatedAtAction(nameof(Create), response);
             }
             
@@ -67,7 +67,7 @@ public class RoleController : ControllerBase
     }
 
     [HttpDelete("{roleId}")]
-    public async Task<ActionResult<FetchRoleResponse>> Delete(string roleId)
+    public async Task<ActionResult<RoleResponse>> Delete(string roleId)
     {
         try
         {
@@ -77,7 +77,7 @@ public class RoleController : ControllerBase
 
             if (success)
             {
-                FetchRoleResponse response = ObjectMapper.CreateFetchRoleResponse(roleToDelete);
+                RoleResponse response = ObjectMapper.CreateFetchRoleResponse(roleToDelete);
                 return Ok(response);
             }
 
