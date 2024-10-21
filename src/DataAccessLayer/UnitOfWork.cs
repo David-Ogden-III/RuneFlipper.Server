@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Models.Entities;
 
 namespace DataAccessLayer;
@@ -76,6 +75,11 @@ public class UnitOfWork(RuneFlipperContext context) : IDisposable
             _characterRepository ??= new(_context);
             return _characterRepository;
         }
+    }
+
+    public async Task SaveAsync()
+    {
+        await _context.SaveChangesAsync();
     }
 
     private bool disposed = false;

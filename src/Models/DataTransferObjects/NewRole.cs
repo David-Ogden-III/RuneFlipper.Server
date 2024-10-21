@@ -1,5 +1,3 @@
 ﻿namespace Models.DataTransferObjects;
 
-internal class Class1
-{
-}
+public record NewRole(string Name);
