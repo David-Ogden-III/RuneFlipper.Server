@@ -30,6 +30,9 @@ jobs:
       - name: Test
         run: dotnet test ./test/RuneFlipper.Server.Test --configuration Release --no-restore
 
+      - name: Cleanup Test Artifacts
+        run: rm -rf ./test/RuneFlipper.Server.Test/bin ./test/RuneFlipper.Server.Test/obj
+
       - name: Publish
         run: dotnet publish ./src/RuneFlipper.Server --configuration Release --no-restore --output './publish'
 
