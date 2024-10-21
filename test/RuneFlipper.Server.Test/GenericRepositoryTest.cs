@@ -1,8 +1,4 @@
-﻿using DataAccessLayer;
-using Microsoft.EntityFrameworkCore;
-using Models.Entities;
-
-namespace RuneFlipper.Server.Test;
+﻿namespace RuneFlipper.Server.Test;
 
 public class GenericRepositoryTest
 {

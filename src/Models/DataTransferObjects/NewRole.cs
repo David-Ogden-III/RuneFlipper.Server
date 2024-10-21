@@ -1,3 +1,3 @@
 ﻿namespace Models.DataTransferObjects;
 
-public record NewRole (string Name);
+public record NewRole(string Name);
