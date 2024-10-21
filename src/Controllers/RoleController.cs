@@ -53,7 +53,7 @@ public class RoleController : ControllerBase
 
             if (success)
             {
-                RoleResponse response = ObjectMapper.CreateRoleResponse(roleToAdd);
+                RoleResponse response = new(roleToAdd.Id, roleToAdd.Name ?? String.Empty);
                 return CreatedAtAction(nameof(Create), response);
             }
 
@@ -77,7 +77,7 @@ public class RoleController : ControllerBase
 
             if (success)
             {
-                RoleResponse response = ObjectMapper.CreateRoleResponse(roleToDelete);
+                RoleResponse response = new(roleToDelete.Id, roleToDelete.Name ?? String.Empty);
                 return Ok(response);
             }
 
