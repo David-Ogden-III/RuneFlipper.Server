@@ -10,6 +10,7 @@ namespace Controllers;
 
 [Route("[controller]")]
 [ApiController]
+[Authorize(Roles = "Owner")]
 public class RoleController : ControllerBase
 {
     private readonly RuneFlipperContext _context;
