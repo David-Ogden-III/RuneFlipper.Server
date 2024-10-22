@@ -1,9 +1,11 @@
 name: Deploy PR to Slot
+
 on:
   pull_request:
     branches:
     - main
     - dev
+
 env:
   AZURE_WEBAPP_NAME: RuneFlipperServer
   SLOT_NAME: pr-${{ github.event.number }}
@@ -20,26 +22,27 @@ jobs:
           dotnet-version: '8.x'
 
       - name: Restore
-        run: dotnet restore 
+        run: dotnet restore ./src/RuneFlipper.Server
 
       - name: Build with dotnet
-        run: dotnet build --configuration Release
+        run: dotnet build ./src/RuneFlipper.Server --configuration Release --no-restore
 
       - name: Test
-        run: dotnet test --no-build
+        run: dotnet test ./test/RuneFlipper.Server.Test --configuration Release
 
       - name: dotnet publish
-        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+        run: dotnet publish ./src/RuneFlipper.Server --configuration Release --no-restore --output './publish'
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: .net-app
-          path: ${{env.DOTNET_ROOT}}/myapp
+          path: ./publish
         
   set-up-test-env:
     name: Create test env
     runs-on: ubuntu-latest
+    needs: build
     
     steps:
     - name: login to AzureCLI
@@ -53,9 +56,13 @@ jobs:
         inlineScript: |
           az webapp deployment slot create --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group rf-ResourceGroup --slot ${{ env.SLOT_NAME }}
 
-    - name: Set environment variable for Azure Slot
+    - name: Set DB Connection String for Azure Slot
       run: |
-        az webapp config appsettings set --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group rf-ResourceGroup --slot ${{ env.SLOT_NAME }} --settings RuneFlipper:Prod=${{ secrets.DEV_CONNECTIONSTRING }}
+        az webapp config connection-string set -g rf-ResourceGroup -n ${{ env.AZURE_WEBAPP_NAME }} -s ${{ env.SLOT_NAME }} -t custom --settings "RuneFlipperDb=${{ secrets.DEV_CONNECTIONSTRING }}"
+
+    - name: Set SendGrid Key for Azure Slot
+      run: |
+        az webapp config appsettings set -g rf-ResourceGroup -n ${{ env.AZURE_WEBAPP_NAME }} -s ${{ env.SLOT_NAME }} --settings "SENDGRID_API_KEY=${{ secrets.SENDGRID_API_KEY }}"
         
   deploy:
     runs-on: ubuntu-latest
@@ -66,15 +73,16 @@ jobs:
       uses: azure/login@v2
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
-        
+         
     - name: Download artifact from build job
       uses: actions/download-artifact@v4
       with:
         name: .net-app
+        path: ./publish
         
     - name: Deploy to Azure WebApp Slot
       uses: azure/webapps-deploy@v3
       with:
         app-name: 'RuneFlipperServer'
-        package: .
+        package: ./publish
         slot-name: ${{ env.SLOT_NAME }}

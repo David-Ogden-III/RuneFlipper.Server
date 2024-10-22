@@ -1,12 +1,12 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Deploy to Prod
+name: Deploy to Dev
 
 on:
   push:
     branches:
-      - main
+      - dev
   workflow_dispatch:
 
 jobs:
@@ -22,15 +22,18 @@ jobs:
           dotnet-version: '8.x'
 
       - name: Restore
-        run: dotnet restore ./src/RuneFlipper.Server
+        run: dotnet restore
 
-      - name: Build with dotnet
+      - name: Build
         run: dotnet build ./src/RuneFlipper.Server --configuration Release --no-restore
 
       - name: Test
-        run: dotnet test ./test/RuneFlipper.Server.Test --configuration Release
+        run: dotnet test ./test/RuneFlipper.Server.Test --configuration Release --no-restore
 
-      - name: dotnet publish
+      - name: Cleanup Test Artifacts
+        run: rm -rf ./test/RuneFlipper.Server.Test/bin ./test/RuneFlipper.Server.Test/obj
+
+      - name: Publish
         run: dotnet publish ./src/RuneFlipper.Server --configuration Release --no-restore --output './publish'
 
       - name: Upload artifact for deployment job
@@ -59,13 +62,15 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_6B835245CE15474E87F4C6AA7584CBA2 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_3B723E88635B4E21BC7B34E8E933F26B }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_8830CC82A0AF4A709BE7CF1EA34CDB6F }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'RuneFlipperServer'
+          app-name: 'RuneFlipperServerDev'
           slot-name: 'Production'
           package: ./publish
           
