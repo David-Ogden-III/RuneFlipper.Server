@@ -23,7 +23,7 @@ public partial class RuneFlipperContext : IdentityDbContext<User>
 
     public virtual DbSet<Mode> Modes { get; set; }
 
-    public virtual DbSet<Selltype> Selltypes { get; set; }
+    public virtual DbSet<SellType> Selltypes { get; set; }
     public virtual DbSet<Trade> Trades { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -54,7 +54,7 @@ public partial class RuneFlipperContext : IdentityDbContext<User>
             entity.HasKey(e => e.Id).HasName("modes_pkey");
         });
 
-        modelBuilder.Entity<Selltype>(entity =>
+        modelBuilder.Entity<SellType>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("selltypes_pkey");
         });
