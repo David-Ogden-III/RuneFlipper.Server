@@ -15,7 +15,7 @@ public partial class RuneFlipperContext : IdentityDbContext<User>
     {
     }
 
-    public virtual DbSet<Buytype> Buytypes { get; set; }
+    public virtual DbSet<BuyType> Buytypes { get; set; }
 
     public virtual DbSet<Character> Characters { get; set; }
 
@@ -30,7 +30,7 @@ public partial class RuneFlipperContext : IdentityDbContext<User>
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<Buytype>(entity =>
+        modelBuilder.Entity<BuyType>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("buytypes_pkey");
         });

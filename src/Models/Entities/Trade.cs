@@ -44,7 +44,7 @@ public partial class Trade
 
     [ForeignKey("BuyTypeId")]
     [InverseProperty("Trades")]
-    public virtual Buytype BuyType { get; set; } = null!;
+    public virtual BuyType BuyType { get; set; } = null!;
 
     [ForeignKey("CharacterId")]
     [InverseProperty("Trades")]

@@ -7,7 +7,7 @@ public class UnitOfWork(RuneFlipperContext context) : IDisposable
 {
     private readonly RuneFlipperContext _context = context;
     private GenericRepository<IdentityRole>? _roleRepository;
-    private GenericRepository<Buytype>? _buyTypeRepository;
+    private GenericRepository<BuyType>? _buyTypeRepository;
     private GenericRepository<Selltype>? _sellTypeRepository;
     private GenericRepository<Trade>? _tradeRepository;
     private GenericRepository<Item>? _itemRepository;
@@ -23,7 +23,7 @@ public class UnitOfWork(RuneFlipperContext context) : IDisposable
         }
     }
 
-    public GenericRepository<Buytype> BuytypeRepository
+    public GenericRepository<BuyType> BuyTypeRepository
     {
         get
         {
@@ -32,7 +32,7 @@ public class UnitOfWork(RuneFlipperContext context) : IDisposable
         }
     }
 
-    public GenericRepository<Selltype> SelltypeRepository
+    public GenericRepository<Selltype> SellTypeRepository
     {
         get
         {

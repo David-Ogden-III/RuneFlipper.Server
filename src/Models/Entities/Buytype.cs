@@ -6,7 +6,7 @@ namespace Models.Entities;
 
 [Table("buytypes")]
 [Index("Name", Name = "buytypes_name_key", IsUnique = true)]
-public partial class Buytype
+public partial class BuyType
 {
     [Key]
     [Column("id")]
