@@ -56,5 +56,5 @@ public partial class Trade
 
     [ForeignKey("SellTypeId")]
     [InverseProperty("Trades")]
-    public virtual Selltype SellType { get; set; } = null!;
+    public virtual SellType SellType { get; set; } = null!;
 }
