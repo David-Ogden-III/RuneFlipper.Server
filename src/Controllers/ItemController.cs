@@ -29,7 +29,7 @@ public class ItemController(RuneFlipperContext context) : ControllerBase
         }
 
 
-        var items = await _unitOfWork.ItemRepository.GetListAsync(filters: filters);
+        ICollection<Item> items = await _unitOfWork.ItemRepository.GetListAsync(filters: filters);
 
         if (!String.IsNullOrWhiteSpace(itemName) && idIsNull)
         {
@@ -67,7 +67,7 @@ public class ItemController(RuneFlipperContext context) : ControllerBase
 
             Item newItem = new()
             {
-                Id = new Guid().ToString(),
+                Id = Guid.NewGuid().ToString(),
                 InGameId = newItemDTO.InGameId,
                 Name = newItemDTO.Name,
                 Description = newItemDTO.Description,
@@ -106,18 +106,19 @@ public class ItemController(RuneFlipperContext context) : ControllerBase
 
     [Authorize(Roles = "Owner, Admin")]
     [HttpPost("CreateItems")]
-    public async Task<ActionResult<int>> CreateItems([FromBody] ICollection<NewItem> newItemDTOs)
+    public async Task<ActionResult<ICollection<ItemResponse>>> CreateItems([FromBody] ICollection<NewItem> newItemDTOs)
     {
         try
         {
-            foreach (var itemDTO in newItemDTOs)
+            List<ItemResponse> items = [];
+            foreach (NewItem itemDTO in newItemDTOs)
             {
                 bool newItemIsValid = ValidateDTOProperties(itemDTO);
                 if (!newItemIsValid) return BadRequest($"Item is Invalid:\n\t{itemDTO.Name}");
 
                 Item newItem = new()
                 {
-                    Id = new Guid().ToString(),
+                    Id = Guid.NewGuid().ToString(),
                     InGameId = itemDTO.InGameId,
                     Name = itemDTO.Name,
                     Description = itemDTO.Description,
@@ -126,6 +127,19 @@ public class ItemController(RuneFlipperContext context) : ControllerBase
                     ModeId = itemDTO.ModeId
                 };
                 _unitOfWork.ItemRepository.Insert(newItem);
+
+                ItemResponse itemResponse = new()
+                {
+                    Id = newItem.Id,
+                    InGameId = newItem.InGameId,
+                    Name = newItem.Name,
+                    Description = newItem.Description,
+                    MembersOnly = newItem.MembersOnly,
+                    TradeLimit = newItem.TradeLimit,
+                    ModeId = newItem.ModeId
+                };
+
+                items.Add(itemResponse);
             }
 
             int inputLength = newItemDTOs.Count;
@@ -133,7 +147,7 @@ public class ItemController(RuneFlipperContext context) : ControllerBase
 
             if (success)
             {
-                return CreatedAtAction(nameof(CreateItems), $"Created {inputLength} item{(inputLength == 1 ? "" : "s")}");
+                return CreatedAtAction(nameof(CreateItems), items);
             }
 
             return BadRequest();
@@ -145,9 +159,44 @@ public class ItemController(RuneFlipperContext context) : ControllerBase
         }
     }
 
+    [HttpDelete("{itemId}")]
+    [Authorize(Roles = "Owner, Admin")]
+    public async Task<ActionResult<ItemResponse>> Delete(string itemId)
+    {
+        try
+        {
+            Item itemToDelete = await _unitOfWork.ItemRepository.GetAsync(filters: [item => item.Id == itemId]);
+
+            if (itemToDelete == null) return BadRequest();
+
+            _unitOfWork.ItemRepository.Delete(itemToDelete);
+
+            bool success = await _unitOfWork.SaveAsync() == 1;
 
 
+            if (success)
+            {
+                ItemResponse response = new()
+                {
+                    Id = itemToDelete.Id,
+                    InGameId = itemToDelete.InGameId,
+                    Name = itemToDelete.Name,
+                    Description = itemToDelete.Description,
+                    MembersOnly = itemToDelete.MembersOnly,
+                    TradeLimit = itemToDelete.TradeLimit,
+                    ModeId = itemToDelete.ModeId
+                };
+                return Ok(response);
+            }
 
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            return BadRequest("Unable to save changes. Try again.");
+        }
+    }
 
     private static bool ValidateDTOProperties(NewItem newItem)
     {
