@@ -15,18 +15,26 @@ public class ItemController(RuneFlipperContext context) : ControllerBase
     private readonly UnitOfWork _unitOfWork = new(context);
 
 
-    [HttpGet]
-    public async Task<ActionResult<ItemResponse>> Get(string? identifier, string modeId)
+    [HttpGet("GetByMode/{modeId}")]
+    public async Task<ActionResult<ItemResponse>> Get(string modeId, string? itemId, string? itemName)
     {
         List<Expression<Func<Item, bool>>> filters = [];
         filters.Add(item => item.ModeId == modeId);
-        if (!String.IsNullOrWhiteSpace(identifier))
+
+        bool idIsNull = String.IsNullOrWhiteSpace(itemId);
+
+        if (!idIsNull)
         {
-            filters.Add(item => item.Id == identifier || item.Name.Contains(identifier, StringComparison.CurrentCultureIgnoreCase));
+            filters.Add(item => item.Id == itemId);
         }
 
 
         var items = await _unitOfWork.ItemRepository.GetListAsync(filters: filters);
+
+        if (!String.IsNullOrWhiteSpace(itemName) && idIsNull)
+        {
+            items = items.Where(item => item.Name.Contains(itemName, StringComparison.InvariantCultureIgnoreCase)).ToList();
+        }
 
         List<ItemResponse> response = [];
         foreach (Item item in items)
