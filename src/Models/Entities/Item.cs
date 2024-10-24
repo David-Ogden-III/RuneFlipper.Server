@@ -21,7 +21,7 @@ public partial class Item
     public string Description { get; set; } = null!;
 
     [Column("member")]
-    public bool Member { get; set; }
+    public bool MembersOnly { get; set; }
 
     [Column("tradelimit")]
     public int TradeLimit { get; set; }
