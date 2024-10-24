@@ -15,8 +15,8 @@ public class ItemController(RuneFlipperContext context) : ControllerBase
     private readonly UnitOfWork _unitOfWork = new(context);
 
 
-    [HttpGet("GetByMode/{modeId}")]
-    public async Task<ActionResult<ItemResponse>> Get(string modeId, string? itemId, string? itemName)
+    [HttpGet("{modeId}")]
+    public async Task<ActionResult<ICollection<ItemResponse>>> Get(string modeId, string? itemId, string? itemName)
     {
         List<Expression<Func<Item, bool>>> filters = [];
         filters.Add(item => item.ModeId == modeId);
@@ -45,7 +45,7 @@ public class ItemController(RuneFlipperContext context) : ControllerBase
                 InGameId = item.InGameId,
                 Name = item.Name,
                 Description = item.Description,
-                MembersOnly = item.Member,
+                MembersOnly = item.MembersOnly,
                 TradeLimit = item.TradeLimit,
                 ModeId = item.ModeId
 
@@ -54,5 +54,109 @@ public class ItemController(RuneFlipperContext context) : ControllerBase
         }
 
         return Ok(response);
+    }
+
+    [Authorize(Roles = "Owner, Admin")]
+    [HttpPost("CreateItem")]
+    public async Task<ActionResult<ItemResponse>> Create([FromBody] NewItem newItemDTO)
+    {
+        try
+        {
+            bool newItemIsValid = ValidateDTOProperties(newItemDTO);
+            if (!newItemIsValid) return BadRequest();
+
+            Item newItem = new()
+            {
+                Id = new Guid().ToString(),
+                InGameId = newItemDTO.InGameId,
+                Name = newItemDTO.Name,
+                Description = newItemDTO.Description,
+                MembersOnly = newItemDTO.MembersOnly,
+                TradeLimit = newItemDTO.TradeLimit,
+                ModeId = newItemDTO.ModeId
+            };
+
+            _unitOfWork.ItemRepository.Insert(newItem);
+
+            bool success = await _unitOfWork.SaveAsync() == 1;
+
+            if (success)
+            {
+                ItemResponse response = new()
+                {
+                    Id = newItem.Id,
+                    InGameId = newItem.InGameId,
+                    Name = newItem.Name,
+                    Description = newItem.Description,
+                    MembersOnly = newItem.MembersOnly,
+                    TradeLimit = newItem.TradeLimit,
+                    ModeId = newItem.ModeId
+                };
+                return CreatedAtAction(nameof(Create), response);
+            }
+
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            return BadRequest("Unable to save changes. Try again.");
+        }
+    }
+
+    [Authorize(Roles = "Owner, Admin")]
+    [HttpPost("CreateItems")]
+    public async Task<ActionResult<int>> CreateItems([FromBody] ICollection<NewItem> newItemDTOs)
+    {
+        try
+        {
+            foreach (var itemDTO in newItemDTOs)
+            {
+                bool newItemIsValid = ValidateDTOProperties(itemDTO);
+                if (!newItemIsValid) return BadRequest($"Item is Invalid:\n\t{itemDTO.Name}");
+
+                Item newItem = new()
+                {
+                    Id = new Guid().ToString(),
+                    InGameId = itemDTO.InGameId,
+                    Name = itemDTO.Name,
+                    Description = itemDTO.Description,
+                    MembersOnly = itemDTO.MembersOnly,
+                    TradeLimit = itemDTO.TradeLimit,
+                    ModeId = itemDTO.ModeId
+                };
+                _unitOfWork.ItemRepository.Insert(newItem);
+            }
+
+            int inputLength = newItemDTOs.Count;
+            bool success = await _unitOfWork.SaveAsync() == inputLength;
+
+            if (success)
+            {
+                return CreatedAtAction(nameof(CreateItems), $"Created {inputLength} item{(inputLength == 1 ? "" : "s")}");
+            }
+
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            return BadRequest("Unable to save changes. Try again.");
+        }
+    }
+
+
+
+
+
+    private static bool ValidateDTOProperties(NewItem newItem)
+    {
+        bool isValid = newItem.InGameId > 0;
+        isValid = isValid && !String.IsNullOrWhiteSpace(newItem.Name);
+        isValid = isValid && !String.IsNullOrWhiteSpace(newItem.Description);
+        isValid = isValid && newItem.TradeLimit > 0;
+        isValid = isValid && !String.IsNullOrWhiteSpace(newItem.ModeId);
+
+        return isValid;
     }
 }
