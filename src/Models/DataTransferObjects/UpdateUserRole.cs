@@ -1,3 +1,3 @@
 ﻿namespace Models.DataTransferObjects;
 
-public record UpdateUserRole(IEnumerable<string> RoleNames, string UserId);
+public record UpdateUserRole(ICollection<string> RoleNames, string UserId);

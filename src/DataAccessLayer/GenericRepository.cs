@@ -14,8 +14,8 @@ public class GenericRepository<TEntity> where TEntity : class
         _dbSet = context.Set<TEntity>();
     }
 
-    public virtual async Task<ICollection<TEntity>> GetListAsync(IEnumerable<Expression<Func<TEntity, bool>>>? filters = null,
-        IEnumerable<string>? tablesToJoin = null,
+    public virtual async Task<ICollection<TEntity>> GetListAsync(ICollection<Expression<Func<TEntity, bool>>>? filters = null,
+        ICollection<string>? tablesToJoin = null,
         Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null)
     {
         IQueryable<TEntity> query = _dbSet;
@@ -49,8 +49,8 @@ public class GenericRepository<TEntity> where TEntity : class
         return result;
     }
 
-    public virtual async Task<TEntity> GetAsync(IEnumerable<Expression<Func<TEntity, bool>>>? filters = null,
-        IEnumerable<string>? tablesToJoin = null)
+    public virtual async Task<TEntity> GetAsync(ICollection<Expression<Func<TEntity, bool>>>? filters = null,
+        ICollection<string>? tablesToJoin = null)
     {
         IQueryable<TEntity> query = _dbSet;
 
