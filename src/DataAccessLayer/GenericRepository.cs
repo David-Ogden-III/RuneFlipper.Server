@@ -3,18 +3,11 @@ using System.Linq.Expressions;
 
 namespace DataAccessLayer;
 
-public class GenericRepository<TEntity> where TEntity : class
+public class GenericRepository<TEntity>(RuneFlipperContext context) where TEntity : class
 {
-    internal RuneFlipperContext _context;
-    internal DbSet<TEntity> _dbSet;
+    private readonly DbSet<TEntity> _dbSet = context.Set<TEntity>();
 
-    public GenericRepository(RuneFlipperContext context)
-    {
-        _context = context;
-        _dbSet = context.Set<TEntity>();
-    }
-
-    public virtual async Task<ICollection<TEntity>> GetListAsync(ICollection<Expression<Func<TEntity, bool>>>? filters = null,
+    public async Task<ICollection<TEntity>> GetListAsync(ICollection<Expression<Func<TEntity, bool>>>? filters = null,
         ICollection<string>? tablesToJoin = null,
         Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null)
     {
@@ -49,7 +42,7 @@ public class GenericRepository<TEntity> where TEntity : class
         return result;
     }
 
-    public virtual async Task<TEntity> GetAsync(ICollection<Expression<Func<TEntity, bool>>>? filters = null,
+    public async Task<TEntity?> GetAsync(ICollection<Expression<Func<TEntity, bool>>>? filters = null,
         ICollection<string>? tablesToJoin = null)
     {
         IQueryable<TEntity> query = _dbSet;
@@ -70,29 +63,29 @@ public class GenericRepository<TEntity> where TEntity : class
             }
         }
 
-        TEntity result = await query.FirstAsync();
+        var result = await query.FirstOrDefaultAsync();
 
         return result;
     }
 
-    public virtual void Insert(TEntity entity)
+    public void Insert(TEntity entity)
     {
         _dbSet.Attach(entity);
-        _context.Entry(entity).State = EntityState.Added;
+        context.Entry(entity).State = EntityState.Added;
     }
 
-    public virtual void Update(TEntity entity)
+    public void Update(TEntity entity)
     {
         _dbSet.Attach(entity);
-        _context.Entry(entity).State = EntityState.Modified;
+        context.Entry(entity).State = EntityState.Modified;
     }
 
-    public virtual void Delete(TEntity entity)
+    public void Delete(TEntity entity)
     {
         _dbSet.Remove(entity);
     }
 
-    public virtual bool Exists(Expression<Func<TEntity, bool>> predicate)
+    public bool Exists(Expression<Func<TEntity, bool>> predicate)
     {
         bool entityExists = _dbSet.Any(predicate);
         return entityExists;

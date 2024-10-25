@@ -10,7 +10,7 @@ public static class ObjectMapper
         List<RoleResponse> responseObjects = [];
         foreach (var role in roles)
         {
-            RoleResponse newResponse = new(role.Id, role.Name ?? String.Empty);
+            RoleResponse newResponse = new(role.Id, role.Name ?? string.Empty);
             responseObjects.Add(newResponse);
         }
 

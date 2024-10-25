@@ -11,15 +11,15 @@ public partial class Mode
     [Key]
     [Column("id")]
     [StringLength(8)]
-    public string Id { get; set; } = null!;
+    public string Id { get; init; } = null!;
 
     [Column("name")]
     [StringLength(50)]
-    public string Name { get; set; } = null!;
+    public string Name { get; init; } = null!;
 
     [InverseProperty("Mode")]
-    public virtual ICollection<Character> Characters { get; set; } = new List<Character>();
+    public virtual ICollection<Character> Characters { get; init; } = new List<Character>();
 
     [InverseProperty("Mode")]
-    public virtual ICollection<Item> Items { get; set; } = new List<Item>();
+    public virtual ICollection<Item> Items { get; init; } = new List<Item>();
 }

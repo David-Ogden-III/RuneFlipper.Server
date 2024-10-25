@@ -30,29 +30,27 @@ public class SellTypeController(RuneFlipperContext context) : ControllerBase
 
     [Authorize(Roles = "Owner, Admin")]
     [HttpPost("CreateSellType")]
-    public async Task<ActionResult<TransactionType>> Create([FromBody] TransactionType newSellTypeDTO)
+    public async Task<ActionResult<TransactionType>> Create([FromBody] TransactionType newSellTypeDto)
     {
         try
         {
-            if (String.IsNullOrWhiteSpace(newSellTypeDTO.Name) || String.IsNullOrWhiteSpace(newSellTypeDTO.Id)) return BadRequest();
+            if (string.IsNullOrWhiteSpace(newSellTypeDto.Name) || string.IsNullOrWhiteSpace(newSellTypeDto.Id)) return BadRequest();
 
             SellType newSellType = new()
             {
-                Id = newSellTypeDTO.Id,
-                Name = newSellTypeDTO.Name,
+                Id = newSellTypeDto.Id,
+                Name = newSellTypeDto.Name
             };
 
             _unitOfWork.SellTypeRepository.Insert(newSellType);
 
             bool success = await _unitOfWork.SaveAsync() == 1;
 
-            if (success)
-            {
-                TransactionType response = new(newSellType.Id, newSellType.Name);
-                return CreatedAtAction(nameof(Create), response);
-            }
+            if (!success) return BadRequest();
 
-            return BadRequest();
+            TransactionType response = new(newSellType.Id, newSellType.Name);
+            return CreatedAtAction(nameof(Create), response);
+
         }
         catch (Exception ex)
         {
@@ -67,7 +65,7 @@ public class SellTypeController(RuneFlipperContext context) : ControllerBase
     {
         try
         {
-            SellType sellTypeToDelete = await _unitOfWork.SellTypeRepository.GetAsync(filters: [sellType => sellType.Id == sellTypeId]);
+            var sellTypeToDelete = await _unitOfWork.SellTypeRepository.GetAsync(filters: [sellType => sellType.Id == sellTypeId]);
 
             if (sellTypeToDelete == null) return BadRequest();
 
@@ -76,13 +74,11 @@ public class SellTypeController(RuneFlipperContext context) : ControllerBase
             bool success = await _unitOfWork.SaveAsync() == 1;
 
 
-            if (success)
-            {
-                TransactionType response = new(sellTypeToDelete.Id, sellTypeToDelete.Name);
-                return Ok(response);
-            }
+            if (!success) return BadRequest();
 
-            return BadRequest();
+            TransactionType response = new(sellTypeToDelete.Id, sellTypeToDelete.Name);
+            return Ok(response);
+
         }
         catch (Exception ex)
         {

@@ -11,12 +11,12 @@ public partial class SellType
     [Key]
     [Column("id")]
     [StringLength(3)]
-    public string Id { get; set; } = null!;
+    public string Id { get; init; } = null!;
 
     [Column("name")]
     [StringLength(20)]
-    public string Name { get; set; } = null!;
+    public string Name { get; init; } = null!;
 
     [InverseProperty("SellType")]
-    public virtual ICollection<Trade> Trades { get; set; } = new List<Trade>();
+    public virtual ICollection<Trade> Trades { get; init; } = new List<Trade>();
 }
