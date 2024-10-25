@@ -5,7 +5,7 @@ namespace Models;
 
 public static class ObjectMapper
 {
-    public static IEnumerable<RoleResponse> CreateRoleResponses(IEnumerable<IdentityRole> roles)
+    public static ICollection<RoleResponse> CreateRoleResponses(ICollection<IdentityRole> roles)
     {
         List<RoleResponse> responseObjects = [];
         foreach (var role in roles)
