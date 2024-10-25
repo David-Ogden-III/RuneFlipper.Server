@@ -11,20 +11,9 @@ namespace Controllers;
 [Route("[controller]")]
 [ApiController]
 [Authorize(Roles = "Owner")]
-public class RoleController : ControllerBase
+public class RoleController(RuneFlipperContext context, RoleManager<IdentityRole> roleManager, UserManager<User> userManager) : ControllerBase
 {
-    private readonly RuneFlipperContext _context;
-    private readonly UnitOfWork _unitOfWork;
-    private readonly RoleManager<IdentityRole> _roleManager;
-    private readonly UserManager<User> _userManager;
-
-    public RoleController(RuneFlipperContext context, RoleManager<IdentityRole> roleManager, UserManager<User> userManager)
-    {
-        _context = context;
-        _unitOfWork = new(_context);
-        _roleManager = roleManager;
-        _userManager = userManager;
-    }
+    private readonly UnitOfWork _unitOfWork = new(context);
 
     [HttpGet]
     public async Task<ActionResult<RoleResponse>> Get()
@@ -40,24 +29,20 @@ public class RoleController : ControllerBase
     {
         try
         {
-            var roleName = newRole.Name;
-
-            if (roleName == null) return BadRequest("Role Name is Invalid");
+            string roleName = newRole.Name;
 
             IdentityRole roleToAdd = new(roleName)
             {
                 ConcurrencyStamp = Guid.NewGuid().ToString()
             };
 
-            bool success = (await _roleManager.CreateAsync(roleToAdd)).Succeeded;
+            bool success = (await roleManager.CreateAsync(roleToAdd)).Succeeded;
 
-            if (success)
-            {
-                RoleResponse response = new(roleToAdd.Id, roleToAdd.Name ?? String.Empty);
-                return CreatedAtAction(nameof(Create), response);
-            }
+            if (!success) return BadRequest();
 
-            return BadRequest();
+            RoleResponse response = new(roleToAdd.Id, roleToAdd.Name ?? string.Empty);
+            return CreatedAtAction(nameof(Create), response);
+
         }
         catch (Exception ex)
         {
@@ -71,17 +56,17 @@ public class RoleController : ControllerBase
     {
         try
         {
-            IdentityRole roleToDelete = await _unitOfWork.RoleRepository.GetAsync(filters: [role => role.Id == roleId]);
-            bool success = (await _roleManager.DeleteAsync(roleToDelete)).Succeeded;
+            var roleToDelete = await _unitOfWork.RoleRepository.GetAsync(filters: [role => role.Id == roleId]);
+            if (roleToDelete == null) return BadRequest();
+
+            bool success = (await roleManager.DeleteAsync(roleToDelete)).Succeeded;
 
 
-            if (success)
-            {
-                RoleResponse response = new(roleToDelete.Id, roleToDelete.Name ?? String.Empty);
-                return Ok(response);
-            }
+            if (!success) return BadRequest();
 
-            return BadRequest();
+            RoleResponse response = new(roleToDelete.Id, roleToDelete.Name ?? string.Empty);
+            return Ok(response);
+
         }
         catch (Exception ex)
         {
@@ -97,15 +82,15 @@ public class RoleController : ControllerBase
         {
             if (updateUserRole.UserId != userId) return BadRequest("Supplied User Id's do not match");
 
-            var user = await _userManager.FindByIdAsync(updateUserRole.UserId);
+            var user = await userManager.FindByIdAsync(updateUserRole.UserId);
             if (user == null) return NotFound("User Not Found");
 
             List<string> roles = [];
             foreach (string roleName in updateUserRole.RoleNames)
             {
-                var currentRole = await _roleManager.FindByNameAsync(roleName);
+                var currentRole = await roleManager.FindByNameAsync(roleName);
 
-                if (currentRole != null && currentRole.Name != null)
+                if (currentRole is { Name: not null })
                 {
                     roles.Add(currentRole.Name);
                 }
@@ -113,7 +98,7 @@ public class RoleController : ControllerBase
 
             if (roles.Count <= 0) return BadRequest();
 
-            bool success = (await _userManager.AddToRolesAsync(user, roles)).Succeeded;
+            bool success = (await userManager.AddToRolesAsync(user, roles)).Succeeded;
 
             if (success)
             {
@@ -136,15 +121,15 @@ public class RoleController : ControllerBase
         {
             if (updateUserRole.UserId != userId) return BadRequest("Supplied User Id's do not match");
 
-            var user = await _userManager.FindByIdAsync(updateUserRole.UserId);
+            var user = await userManager.FindByIdAsync(updateUserRole.UserId);
             if (user == null) return NotFound("User Not Found");
 
             List<string> roles = [];
             foreach (string roleName in updateUserRole.RoleNames)
             {
-                var currentRole = await _roleManager.FindByNameAsync(roleName);
+                var currentRole = await roleManager.FindByNameAsync(roleName);
 
-                if (currentRole != null && currentRole.Name != null)
+                if (currentRole is { Name: not null })
                 {
                     roles.Add(currentRole.Name);
                 }
@@ -152,7 +137,7 @@ public class RoleController : ControllerBase
 
             if (roles.Count <= 0) return BadRequest("Supplied role names did not match any existing roles");
 
-            bool success = (await _userManager.RemoveFromRolesAsync(user, roles)).Succeeded;
+            bool success = (await userManager.RemoveFromRolesAsync(user, roles)).Succeeded;
 
             if (success)
             {

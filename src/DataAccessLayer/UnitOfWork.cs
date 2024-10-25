@@ -5,10 +5,9 @@ namespace DataAccessLayer;
 
 public class UnitOfWork(RuneFlipperContext context) : IDisposable
 {
-    private readonly RuneFlipperContext _context = context;
     private GenericRepository<IdentityRole>? _roleRepository;
-    private GenericRepository<Buytype>? _buyTypeRepository;
-    private GenericRepository<Selltype>? _sellTypeRepository;
+    private GenericRepository<BuyType>? _buyTypeRepository;
+    private GenericRepository<SellType>? _sellTypeRepository;
     private GenericRepository<Trade>? _tradeRepository;
     private GenericRepository<Item>? _itemRepository;
     private GenericRepository<Mode>? _modeRepository;
@@ -18,25 +17,25 @@ public class UnitOfWork(RuneFlipperContext context) : IDisposable
     {
         get
         {
-            _roleRepository ??= new(_context);
+            _roleRepository ??= new GenericRepository<IdentityRole>(context);
             return _roleRepository;
         }
     }
 
-    public GenericRepository<Buytype> BuytypeRepository
+    public GenericRepository<BuyType> BuyTypeRepository
     {
         get
         {
-            _buyTypeRepository ??= new(_context);
+            _buyTypeRepository ??= new GenericRepository<BuyType>(context);
             return _buyTypeRepository;
         }
     }
 
-    public GenericRepository<Selltype> SelltypeRepository
+    public GenericRepository<SellType> SellTypeRepository
     {
         get
         {
-            _sellTypeRepository ??= new(_context);
+            _sellTypeRepository ??= new GenericRepository<SellType>(context);
             return _sellTypeRepository;
         }
     }
@@ -45,7 +44,7 @@ public class UnitOfWork(RuneFlipperContext context) : IDisposable
     {
         get
         {
-            _tradeRepository ??= new(_context);
+            _tradeRepository ??= new GenericRepository<Trade>(context);
             return _tradeRepository;
         }
     }
@@ -54,7 +53,7 @@ public class UnitOfWork(RuneFlipperContext context) : IDisposable
     {
         get
         {
-            _itemRepository ??= new(_context);
+            _itemRepository ??= new GenericRepository<Item>(context);
             return _itemRepository;
         }
     }
@@ -63,7 +62,7 @@ public class UnitOfWork(RuneFlipperContext context) : IDisposable
     {
         get
         {
-            _modeRepository ??= new(_context);
+            _modeRepository ??= new GenericRepository<Mode>(context);
             return _modeRepository;
         }
     }
@@ -72,28 +71,28 @@ public class UnitOfWork(RuneFlipperContext context) : IDisposable
     {
         get
         {
-            _characterRepository ??= new(_context);
+            _characterRepository ??= new GenericRepository<Character>(context);
             return _characterRepository;
         }
     }
 
-    public async Task SaveAsync()
+    public async Task<int> SaveAsync()
     {
-        await _context.SaveChangesAsync();
+        return await context.SaveChangesAsync();
     }
 
-    private bool disposed = false;
+    private bool _disposed = false;
 
-    protected virtual void Dispose(bool disposing)
+    private void Dispose(bool disposing)
     {
-        if (!disposed)
+        if (!_disposed)
         {
             if (disposing)
             {
-                _context.Dispose();
+                context.Dispose();
             }
         }
-        disposed = true;
+        _disposed = true;
     }
 
     public void Dispose()

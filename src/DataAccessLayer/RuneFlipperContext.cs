@@ -15,22 +15,22 @@ public partial class RuneFlipperContext : IdentityDbContext<User>
     {
     }
 
-    public virtual DbSet<Buytype> Buytypes { get; set; }
+    public virtual DbSet<BuyType> Buytypes { get; init; }
 
-    public virtual DbSet<Character> Characters { get; set; }
+    public virtual DbSet<Character> Characters { get; init; }
 
-    public virtual DbSet<Item> Items { get; set; }
+    public virtual DbSet<Item> Items { get; init; }
 
-    public virtual DbSet<Mode> Modes { get; set; }
+    public virtual DbSet<Mode> Modes { get; init; }
 
-    public virtual DbSet<Selltype> Selltypes { get; set; }
-    public virtual DbSet<Trade> Trades { get; set; }
+    public virtual DbSet<SellType> Selltypes { get; init; }
+    public virtual DbSet<Trade> Trades { get; init; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<Buytype>(entity =>
+        modelBuilder.Entity<BuyType>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("buytypes_pkey");
         });
@@ -54,7 +54,7 @@ public partial class RuneFlipperContext : IdentityDbContext<User>
             entity.HasKey(e => e.Id).HasName("modes_pkey");
         });
 
-        modelBuilder.Entity<Selltype>(entity =>
+        modelBuilder.Entity<SellType>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("selltypes_pkey");
         });
@@ -71,8 +71,5 @@ public partial class RuneFlipperContext : IdentityDbContext<User>
 
             entity.HasOne(d => d.SellType).WithMany(p => p.Trades).HasConstraintName("trades_selltypeid_fkey");
         });
-        OnModelCreatingPartial(modelBuilder);
     }
-
-    partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }

@@ -2,5 +2,5 @@
 
 public class MailSenderOptions
 {
-    public string? SendGridKey { get; set; } = Environment.GetEnvironmentVariable("SENDGRID_API_KEY");
+    public string? SendGridKey { get; init; } = Environment.GetEnvironmentVariable("SENDGRID_API_KEY");
 }
