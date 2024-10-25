@@ -19,7 +19,7 @@ public class ObjectMapperTest
 
         var responses = ObjectMapper.CreateRoleResponses(roles);
 
-        Assert.Equal(responses.Count(), length);
+        Assert.Equal(responses.Count, length);
     }
 
     [Theory]
@@ -31,7 +31,7 @@ public class ObjectMapperTest
         IdentityRole[] roles = new IdentityRole[index + 1];
         for (int i = 0; i < index + 1; i++)
         {
-            roles[i] = new IdentityRole()
+            roles[i] = new IdentityRole
             {
                 Name = i.ToString()
             };

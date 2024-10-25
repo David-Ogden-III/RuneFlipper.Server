@@ -8,32 +8,32 @@ public partial class Item
 {
     [Key]
     [Column("id")]
-    public string Id { get; set; } = null!;
+    public string Id { get; init; } = null!;
 
     [Column("ingameid")]
-    public int InGameId { get; set; }
+    public int InGameId { get; init; }
 
     [Column("name")]
     [StringLength(255)]
-    public string Name { get; set; } = null!;
+    public string Name { get; init; } = null!;
 
     [Column("description")]
-    public string Description { get; set; } = null!;
+    public string Description { get; init; } = null!;
 
     [Column("member")]
-    public bool MembersOnly { get; set; }
+    public bool MembersOnly { get; init; }
 
     [Column("tradelimit")]
-    public int TradeLimit { get; set; }
+    public int TradeLimit { get; init; }
 
     [Column("modeid")]
     [StringLength(8)]
-    public string ModeId { get; set; } = null!;
+    public string ModeId { get; init; } = null!;
 
     [ForeignKey("ModeId")]
     [InverseProperty("Items")]
-    public virtual Mode Mode { get; set; } = null!;
+    public virtual Mode Mode { get; init; } = null!;
 
     [InverseProperty("Item")]
-    public virtual ICollection<Trade> Trades { get; set; } = new List<Trade>();
+    public virtual ICollection<Trade> Trades { get; init; } = new List<Trade>();
 }

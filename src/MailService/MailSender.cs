@@ -6,16 +6,10 @@ using SendGrid.Helpers.Mail;
 
 namespace MailService;
 
-public class MailSender : IEmailSender
+public class MailSender(IOptions<MailSenderOptions> options, ILogger<MailSender> logger) : IEmailSender
 {
-    private readonly ILogger _logger;
-    public MailSenderOptions Options { get; }
-
-    public MailSender(IOptions<MailSenderOptions> options, ILogger<MailSender> logger)
-    {
-        Options = options.Value;
-        _logger = logger;
-    }
+    private readonly ILogger _logger = logger;
+    private MailSenderOptions Options { get; } = options.Value;
 
     public async Task SendEmailAsync(string toEmail, string subject, string message)
     {
@@ -26,11 +20,11 @@ public class MailSender : IEmailSender
         await Execute(Options.SendGridKey, subject, message, toEmail);
     }
 
-    public async Task Execute(string apiKey, string subject, string message, string toEmail)
+    private async Task Execute(string apiKey, string subject, string message, string toEmail)
     {
         var client = new SendGridClient(apiKey);
 
-        var msg = new SendGridMessage()
+        var msg = new SendGridMessage
         {
             From = new EmailAddress("emailconfirmation@runeflipper.com", "RuneFlipper"),
             Subject = subject,

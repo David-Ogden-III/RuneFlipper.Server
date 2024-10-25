@@ -30,29 +30,26 @@ public class BuyTypeController(RuneFlipperContext context) : ControllerBase
 
     [Authorize(Roles = "Owner, Admin")]
     [HttpPost("CreateBuyType")]
-    public async Task<ActionResult<TransactionType>> Create([FromBody] TransactionType newBuyTypeDTO)
+    public async Task<ActionResult<TransactionType>> Create([FromBody] TransactionType newBuyTypeDto)
     {
         try
         {
-            if (String.IsNullOrWhiteSpace(newBuyTypeDTO.Name) || String.IsNullOrWhiteSpace(newBuyTypeDTO.Id)) return BadRequest();
+            if (string.IsNullOrWhiteSpace(newBuyTypeDto.Name) || string.IsNullOrWhiteSpace(newBuyTypeDto.Id)) return BadRequest();
 
             BuyType newBuyType = new()
             {
-                Id = newBuyTypeDTO.Id,
-                Name = newBuyTypeDTO.Name,
+                Id = newBuyTypeDto.Id,
+                Name = newBuyTypeDto.Name
             };
 
             _unitOfWork.BuyTypeRepository.Insert(newBuyType);
 
             bool success = await _unitOfWork.SaveAsync() == 1;
 
-            if (success)
-            {
-                TransactionType response = new(newBuyType.Id, newBuyType.Name);
-                return CreatedAtAction(nameof(Create), response);
-            }
+            if (!success) return BadRequest();
+            TransactionType response = new(newBuyType.Id, newBuyType.Name);
+            return CreatedAtAction(nameof(Create), response);
 
-            return BadRequest();
         }
         catch (Exception ex)
         {
@@ -67,22 +64,20 @@ public class BuyTypeController(RuneFlipperContext context) : ControllerBase
     {
         try
         {
-            BuyType buyTypeToDelete = await _unitOfWork.BuyTypeRepository.GetAsync(filters: [buyType => buyType.Id == buyTypeId]);
+            var buyTypeToDelete = await _unitOfWork.BuyTypeRepository.GetAsync(filters: [buyType => buyType.Id == buyTypeId]);
 
-            if (buyTypeToDelete == null) return BadRequest();
+            if (buyTypeToDelete == null) return NotFound();
 
             _unitOfWork.BuyTypeRepository.Delete(buyTypeToDelete);
 
             bool success = await _unitOfWork.SaveAsync() == 1;
 
 
-            if (success)
-            {
-                TransactionType response = new(buyTypeToDelete.Id, buyTypeToDelete.Name);
-                return Ok(response);
-            }
+            if (!success) return BadRequest();
 
-            return BadRequest();
+            TransactionType response = new(buyTypeToDelete.Id, buyTypeToDelete.Name);
+            return Ok(response);
+
         }
         catch (Exception ex)
         {

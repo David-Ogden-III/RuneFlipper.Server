@@ -18,10 +18,12 @@ public class ItemController(RuneFlipperContext context) : ControllerBase
     [HttpGet("{modeId}")]
     public async Task<ActionResult<ICollection<ItemResponse>>> Get(string modeId, string? itemId, string? itemName)
     {
-        List<Expression<Func<Item, bool>>> filters = [];
-        filters.Add(item => item.ModeId == modeId);
+        List<Expression<Func<Item, bool>>> filters =
+        [
+            item => item.ModeId == modeId
+        ];
 
-        bool idIsNull = String.IsNullOrWhiteSpace(itemId);
+        bool idIsNull = string.IsNullOrWhiteSpace(itemId);
 
         if (!idIsNull)
         {
@@ -29,9 +31,9 @@ public class ItemController(RuneFlipperContext context) : ControllerBase
         }
 
 
-        ICollection<Item> items = await _unitOfWork.ItemRepository.GetListAsync(filters: filters);
+        var items = await _unitOfWork.ItemRepository.GetListAsync(filters: filters);
 
-        if (!String.IsNullOrWhiteSpace(itemName) && idIsNull)
+        if (!string.IsNullOrWhiteSpace(itemName) && idIsNull)
         {
             items = items.Where(item => item.Name.Contains(itemName, StringComparison.InvariantCultureIgnoreCase)).ToList();
         }
@@ -58,44 +60,42 @@ public class ItemController(RuneFlipperContext context) : ControllerBase
 
     [Authorize(Roles = "Owner, Admin")]
     [HttpPost("CreateItem")]
-    public async Task<ActionResult<ItemResponse>> Create([FromBody] NewItem newItemDTO)
+    public async Task<ActionResult<ItemResponse>> Create([FromBody] NewItem newItemDto)
     {
         try
         {
-            bool newItemIsValid = ValidateDTOProperties(newItemDTO);
+            bool newItemIsValid = ValidateDtoProperties(newItemDto);
             if (!newItemIsValid) return BadRequest();
 
             Item newItem = new()
             {
                 Id = Guid.NewGuid().ToString(),
-                InGameId = newItemDTO.InGameId,
-                Name = newItemDTO.Name,
-                Description = newItemDTO.Description,
-                MembersOnly = newItemDTO.MembersOnly,
-                TradeLimit = newItemDTO.TradeLimit,
-                ModeId = newItemDTO.ModeId
+                InGameId = newItemDto.InGameId,
+                Name = newItemDto.Name,
+                Description = newItemDto.Description,
+                MembersOnly = newItemDto.MembersOnly,
+                TradeLimit = newItemDto.TradeLimit,
+                ModeId = newItemDto.ModeId
             };
 
             _unitOfWork.ItemRepository.Insert(newItem);
 
             bool success = await _unitOfWork.SaveAsync() == 1;
 
-            if (success)
-            {
-                ItemResponse response = new()
-                {
-                    Id = newItem.Id,
-                    InGameId = newItem.InGameId,
-                    Name = newItem.Name,
-                    Description = newItem.Description,
-                    MembersOnly = newItem.MembersOnly,
-                    TradeLimit = newItem.TradeLimit,
-                    ModeId = newItem.ModeId
-                };
-                return CreatedAtAction(nameof(Create), response);
-            }
+            if (!success) return BadRequest();
 
-            return BadRequest();
+            ItemResponse response = new()
+            {
+                Id = newItem.Id,
+                InGameId = newItem.InGameId,
+                Name = newItem.Name,
+                Description = newItem.Description,
+                MembersOnly = newItem.MembersOnly,
+                TradeLimit = newItem.TradeLimit,
+                ModeId = newItem.ModeId
+            };
+            return CreatedAtAction(nameof(Create), response);
+
         }
         catch (Exception ex)
         {
@@ -111,20 +111,20 @@ public class ItemController(RuneFlipperContext context) : ControllerBase
         try
         {
             List<ItemResponse> items = [];
-            foreach (NewItem itemDTO in newItemDTOs)
+            foreach (NewItem itemDto in newItemDTOs)
             {
-                bool newItemIsValid = ValidateDTOProperties(itemDTO);
-                if (!newItemIsValid) return BadRequest($"Item is Invalid:\n\t{itemDTO.Name}");
+                bool newItemIsValid = ValidateDtoProperties(itemDto);
+                if (!newItemIsValid) return BadRequest($"Item is Invalid:\n\t{itemDto.Name}");
 
                 Item newItem = new()
                 {
                     Id = Guid.NewGuid().ToString(),
-                    InGameId = itemDTO.InGameId,
-                    Name = itemDTO.Name,
-                    Description = itemDTO.Description,
-                    MembersOnly = itemDTO.MembersOnly,
-                    TradeLimit = itemDTO.TradeLimit,
-                    ModeId = itemDTO.ModeId
+                    InGameId = itemDto.InGameId,
+                    Name = itemDto.Name,
+                    Description = itemDto.Description,
+                    MembersOnly = itemDto.MembersOnly,
+                    TradeLimit = itemDto.TradeLimit,
+                    ModeId = itemDto.ModeId
                 };
                 _unitOfWork.ItemRepository.Insert(newItem);
 
@@ -165,7 +165,7 @@ public class ItemController(RuneFlipperContext context) : ControllerBase
     {
         try
         {
-            Item itemToDelete = await _unitOfWork.ItemRepository.GetAsync(filters: [item => item.Id == itemId]);
+            var itemToDelete = await _unitOfWork.ItemRepository.GetAsync(filters: [item => item.Id == itemId]);
 
             if (itemToDelete == null) return BadRequest();
 
@@ -174,22 +174,20 @@ public class ItemController(RuneFlipperContext context) : ControllerBase
             bool success = await _unitOfWork.SaveAsync() == 1;
 
 
-            if (success)
-            {
-                ItemResponse response = new()
-                {
-                    Id = itemToDelete.Id,
-                    InGameId = itemToDelete.InGameId,
-                    Name = itemToDelete.Name,
-                    Description = itemToDelete.Description,
-                    MembersOnly = itemToDelete.MembersOnly,
-                    TradeLimit = itemToDelete.TradeLimit,
-                    ModeId = itemToDelete.ModeId
-                };
-                return Ok(response);
-            }
+            if (!success) return BadRequest();
 
-            return BadRequest();
+            ItemResponse response = new()
+            {
+                Id = itemToDelete.Id,
+                InGameId = itemToDelete.InGameId,
+                Name = itemToDelete.Name,
+                Description = itemToDelete.Description,
+                MembersOnly = itemToDelete.MembersOnly,
+                TradeLimit = itemToDelete.TradeLimit,
+                ModeId = itemToDelete.ModeId
+            };
+            return Ok(response);
+
         }
         catch (Exception ex)
         {
@@ -198,13 +196,13 @@ public class ItemController(RuneFlipperContext context) : ControllerBase
         }
     }
 
-    private static bool ValidateDTOProperties(NewItem newItem)
+    private static bool ValidateDtoProperties(NewItem newItem)
     {
         bool isValid = newItem.InGameId > 0;
-        isValid = isValid && !String.IsNullOrWhiteSpace(newItem.Name);
-        isValid = isValid && !String.IsNullOrWhiteSpace(newItem.Description);
+        isValid = isValid && !string.IsNullOrWhiteSpace(newItem.Name);
+        isValid = isValid && !string.IsNullOrWhiteSpace(newItem.Description);
         isValid = isValid && newItem.TradeLimit > 0;
-        isValid = isValid && !String.IsNullOrWhiteSpace(newItem.ModeId);
+        isValid = isValid && !string.IsNullOrWhiteSpace(newItem.ModeId);
 
         return isValid;
     }

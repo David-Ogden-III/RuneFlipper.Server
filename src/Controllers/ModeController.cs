@@ -14,15 +14,15 @@ public class ModeController(RuneFlipperContext context) : ControllerBase
     private readonly UnitOfWork _unitOfWork = new(context);
 
     [HttpGet]
-    public async Task<ActionResult<ModeDTO>> Get()
+    public async Task<ActionResult<ModeDto>> Get()
     {
         var modes = await _unitOfWork.ModeRepository.GetListAsync();
 
-        List<ModeDTO> response = [];
+        List<ModeDto> response = [];
         foreach (var mode in modes)
         {
-            ModeDTO modeDTO = new(mode.Id, mode.Name);
-            response.Add(modeDTO);
+            ModeDto modeDto = new(mode.Id, mode.Name);
+            response.Add(modeDto);
         }
 
         return Ok(response);
@@ -30,29 +30,27 @@ public class ModeController(RuneFlipperContext context) : ControllerBase
 
     [Authorize(Roles = "Owner, Admin")]
     [HttpPost("CreateMode")]
-    public async Task<ActionResult<ModeDTO>> Create([FromBody] ModeDTO newModeDTO)
+    public async Task<ActionResult<ModeDto>> Create([FromBody] ModeDto newModeDto)
     {
         try
         {
-            if (String.IsNullOrWhiteSpace(newModeDTO.Name) || String.IsNullOrWhiteSpace(newModeDTO.Id)) return BadRequest();
+            if (string.IsNullOrWhiteSpace(newModeDto.Name) || string.IsNullOrWhiteSpace(newModeDto.Id)) return BadRequest();
 
             Mode newMode = new()
             {
-                Id = newModeDTO.Id,
-                Name = newModeDTO.Name,
+                Id = newModeDto.Id,
+                Name = newModeDto.Name
             };
 
             _unitOfWork.ModeRepository.Insert(newMode);
 
             bool success = await _unitOfWork.SaveAsync() == 1;
 
-            if (success)
-            {
-                ModeDTO response = new(newMode.Id, newMode.Name);
-                return CreatedAtAction(nameof(Create), response);
-            }
+            if (!success) return BadRequest();
 
-            return BadRequest();
+            ModeDto response = new(newMode.Id, newMode.Name);
+            return CreatedAtAction(nameof(Create), response);
+
         }
         catch (Exception ex)
         {
@@ -63,11 +61,11 @@ public class ModeController(RuneFlipperContext context) : ControllerBase
 
     [HttpDelete("{modeId}")]
     [Authorize(Roles = "Owner, Admin")]
-    public async Task<ActionResult<ModeDTO>> Delete(string modeId)
+    public async Task<ActionResult<ModeDto>> Delete(string modeId)
     {
         try
         {
-            Mode modeToDelete = await _unitOfWork.ModeRepository.GetAsync(filters: [mode => mode.Id == modeId]);
+            var modeToDelete = await _unitOfWork.ModeRepository.GetAsync(filters: [mode => mode.Id == modeId]);
 
             if (modeToDelete == null) return BadRequest();
 
@@ -76,13 +74,11 @@ public class ModeController(RuneFlipperContext context) : ControllerBase
             bool success = await _unitOfWork.SaveAsync() == 1;
 
 
-            if (success)
-            {
-                ModeDTO response = new(modeToDelete.Id, modeToDelete.Name);
-                return Ok(response);
-            }
+            if (!success) return BadRequest();
 
-            return BadRequest();
+            ModeDto response = new(modeToDelete.Id, modeToDelete.Name);
+            return Ok(response);
+
         }
         catch (Exception ex)
         {

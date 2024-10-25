@@ -8,53 +8,53 @@ public partial class Trade
 {
     [Key]
     [Column("id")]
-    public string Id { get; set; } = null!;
+    public string Id { get; init; } = null!;
 
     [Column("buyprice")]
-    public long BuyPrice { get; set; }
+    public long BuyPrice { get; init; }
 
     [Column("sellprice")]
-    public long SellPrice { get; set; }
+    public long SellPrice { get; init; }
 
     [Column("quantity")]
-    public int Quantity { get; set; }
+    public int Quantity { get; init; }
 
     [Column("buydatetime", TypeName = "timestamp without time zone")]
-    public DateTime BuyDateTime { get; set; }
+    public DateTime BuyDateTime { get; init; }
 
     [Column("selldatetime", TypeName = "timestamp without time zone")]
-    public DateTime SellDateTime { get; set; }
+    public DateTime SellDateTime { get; init; }
 
     [Column("iscomplete")]
-    public bool IsComplete { get; set; }
+    public bool IsComplete { get; init; }
 
     [Column("characterid")]
-    public string CharacterId { get; set; } = null!;
+    public string CharacterId { get; init; } = null!;
 
     [Column("itemid")]
-    public string ItemId { get; set; } = null!;
+    public string ItemId { get; init; } = null!;
 
     [Column("buytypeid")]
     [StringLength(3)]
-    public string BuyTypeId { get; set; } = null!;
+    public string BuyTypeId { get; init; } = null!;
 
     [Column("selltypeid")]
     [StringLength(3)]
-    public string SellTypeId { get; set; } = null!;
+    public string SellTypeId { get; init; } = null!;
 
     [ForeignKey("BuyTypeId")]
     [InverseProperty("Trades")]
-    public virtual BuyType BuyType { get; set; } = null!;
+    public virtual BuyType BuyType { get; init; } = null!;
 
     [ForeignKey("CharacterId")]
     [InverseProperty("Trades")]
-    public virtual Character Character { get; set; } = null!;
+    public virtual Character Character { get; init; } = null!;
 
     [ForeignKey("ItemId")]
     [InverseProperty("Trades")]
-    public virtual Item Item { get; set; } = null!;
+    public virtual Item Item { get; init; } = null!;
 
     [ForeignKey("SellTypeId")]
     [InverseProperty("Trades")]
-    public virtual SellType SellType { get; set; } = null!;
+    public virtual SellType SellType { get; init; } = null!;
 }
