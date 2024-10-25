@@ -8,7 +8,6 @@ public partial class Character
 {
     [Key]
     [Column("id")]
-    [StringLength(36)]
     public string Id { get; init; } = null!;
 
     [Column("name")]

@@ -8,7 +8,6 @@ public partial class Trade
 {
     [Key]
     [Column("id")]
-    [StringLength(36)]
     public string Id { get; init; } = null!;
 
     [Column("buyprice")]
@@ -30,11 +29,9 @@ public partial class Trade
     public bool IsComplete { get; init; }
 
     [Column("characterid")]
-    [StringLength(36)]
     public string CharacterId { get; init; } = null!;
 
     [Column("itemid")]
-    [StringLength(36)]
     public string ItemId { get; init; } = null!;
 
     [Column("buytypeid")]
