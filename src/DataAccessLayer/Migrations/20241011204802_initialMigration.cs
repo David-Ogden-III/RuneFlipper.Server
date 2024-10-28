@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace RuneFlipper.Server.Migrations
+namespace DataAccessLayer.Migrations
 {
     /// <inheritdoc />
     public partial class initialMigration : Migration
