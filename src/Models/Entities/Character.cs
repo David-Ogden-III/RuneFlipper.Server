@@ -21,7 +21,7 @@ public partial class Character
     [Column("UserId")]
     public string UserId { get; init; } = null!;
 
-    [Column("createdat", TypeName = "timestamp without time zone")]
+    [Column("createdat", TypeName = "timestamp with time zone")]
     public DateTime CreatedAt { get; init; }
 
     [Column("member")]

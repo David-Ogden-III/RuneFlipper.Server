@@ -16,7 +16,7 @@ public class CharacterController(RuneFlipperContext context) : ControllerBase
     private readonly UnitOfWork _unitOfWork = new(context);
 
     [HttpGet("{userId}")]
-    public async Task<ActionResult<CharacterResponse>> Get(string userId, string? modeId, bool? member)
+    public async Task<ActionResult<ICollection<CharacterResponse>>> Get(string userId, string? modeId, bool? member)
     {
         var authedUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (authedUserId != userId) return Forbid();
@@ -25,10 +25,10 @@ public class CharacterController(RuneFlipperContext context) : ControllerBase
         [
             character => character.UserId == userId
         ];
-            
+
         if (!string.IsNullOrWhiteSpace(modeId)) filters.Add(character => character.ModeId == modeId);
         if (member != null) filters.Add(character => character.Member == member);
-            
+
 
         var characters = await _unitOfWork.CharacterRepository.GetListAsync(filters: filters);
 
@@ -50,18 +50,55 @@ public class CharacterController(RuneFlipperContext context) : ControllerBase
         return Ok(response);
     }
 
+    [HttpGet("{userId}/{characterId}")]
+    public async Task<ActionResult<CharacterResponse>> GetCharacter(string userId, string characterId)
+    {
+        var authedUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (authedUserId != userId) return Forbid();
 
-    [HttpPost("CreateCharacter")]
-    public async Task<ActionResult<CharacterResponse>> Create([FromBody] CharacterResponse newCharacterDto)
+        List<Expression<Func<Character, bool>>> filters =
+        [
+            character => character.UserId == userId,
+            character => character.Id == characterId
+        ];
+
+        var character = await _unitOfWork.CharacterRepository.GetAsync(filters: filters);
+
+        if (character == null) return NotFound();
+
+        CharacterResponse response = new()
+        {
+            Id = character.Id,
+            Name = character.Name,
+            Member = character.Member,
+            UserId = character.UserId,
+            CreatedAt = character.CreatedAt,
+            ModeId = character.ModeId
+        };
+
+        return Ok(response);
+    }
+
+
+    [HttpPost]
+    public async Task<ActionResult<CharacterResponse>> Create([FromBody] NewCharacter newCharacterDto)
     {
         try
         {
-            if (string.IsNullOrWhiteSpace(newCharacterDto.Name) || string.IsNullOrWhiteSpace(newCharacterDto.Id)) return BadRequest();
+            var authedUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (authedUserId != newCharacterDto.UserId) return Forbid();
+
+            if (!InputIsValid(newCharacterDto)) return BadRequest();
 
             Character newCharacter = new()
             {
-                Id = newCharacterDto.Id,
-                Name = newCharacterDto.Name
+                Id = Guid.NewGuid().ToString(),
+                Name = newCharacterDto.Name,
+                ModeId = newCharacterDto.ModeId,
+                UserId = newCharacterDto.UserId,
+                CreatedAt = newCharacterDto.CreatedAt,
+                Member = newCharacterDto.Member
+
             };
 
             _unitOfWork.CharacterRepository.Insert(newCharacter);
@@ -133,5 +170,12 @@ public class CharacterController(RuneFlipperContext context) : ControllerBase
         }
     }
 
+    private static bool InputIsValid(NewCharacter character)
+    {
+        bool isValid = !string.IsNullOrWhiteSpace(character.Name);
+        isValid = !string.IsNullOrWhiteSpace(character.ModeId) && isValid;
+        isValid = !string.IsNullOrWhiteSpace(character.UserId) && isValid;
+        return isValid;
+    }
 }
 
