@@ -67,7 +67,7 @@ public class ObjectMapper
         return tradeSummary;
     }
 
-    public Trade CreateNewTrade(CreateTradeRequest request)
+    public Trade CreateNewTrade(NewTrade request)
     {
         Trade newTrade = new()
         {
@@ -77,30 +77,30 @@ public class ObjectMapper
             BuyPrice = request.BuyPrice,
             BuyDateTime = request.BuyDateTime,
             SellTypeId = request.SellTypeId,
-            GrossSellPrice = request.GrossSellPrice,
+            SellPrice = request.SellPrice,
             Quantity = request.Quantity,
             SellDateTime = request.SellDateTime,
-            IsComplete = Convert.ToInt32(request.IsComplete),
+            IsComplete = request.IsComplete
         };
 
         return newTrade;
     }
 
-    public Trade UpdateExistingTrade(Trade existingTrade, UpdateTradeRequest request)
-    {
-        existingTrade.CharacterId = request.CharacterId;
-        existingTrade.ItemId = request.ItemId;
-        existingTrade.BuyTypeId = request.BuyTypeId;
-        existingTrade.BuyPrice = request.BuyPrice;
-        existingTrade.BuyDateTime = request.BuyDateTime;
-        existingTrade.SellTypeId = request.SellTypeId;
-        existingTrade.GrossSellPrice = request.GrossSellPrice;
-        existingTrade.Quantity = request.Quantity;
-        existingTrade.SellDateTime = request.SellDateTime;
-        existingTrade.IsComplete = Convert.ToInt32(request.IsComplete);
+    //public Trade UpdateExistingTrade(Trade existingTrade, UpdateTradeRequest request)
+    //{
+    //    existingTrade.CharacterId = request.CharacterId;
+    //    existingTrade.ItemId = request.ItemId;
+    //    existingTrade.BuyTypeId = request.BuyTypeId;
+    //    existingTrade.BuyPrice = request.BuyPrice;
+    //    existingTrade.BuyDateTime = request.BuyDateTime;
+    //    existingTrade.SellTypeId = request.SellTypeId;
+    //    existingTrade.SellPrice = request.GrossSellPrice;
+    //    existingTrade.Quantity = request.Quantity;
+    //    existingTrade.SellDateTime = request.SellDateTime;
+    //    existingTrade.IsComplete = request.IsComplete;
 
-        return existingTrade;
-    }
+    //    return existingTrade;
+    //}
 
     public static ICollection<RoleResponse> CreateRoleResponses(ICollection<IdentityRole> roles)
     {

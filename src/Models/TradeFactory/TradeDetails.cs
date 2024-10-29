@@ -1,4 +1,5 @@
-﻿using Models.Entities;
+﻿using Models.DataTransferObjects;
+using Models.Entities;
 
 namespace Models.TradeFactory;
 public abstract class TradeDetails(Trade trade) : TradeCalculations
