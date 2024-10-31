@@ -11,5 +11,5 @@ public record UpdateTradeRequest
     public required string ItemId { get; init; }
     public required bool IsComplete { get; init; }
     public required DateTime BuyDateTime { get; init; }
-    public required DateTime SeDateTime { get; init; }
+    public required DateTime SellDateTime { get; init; }
 }
