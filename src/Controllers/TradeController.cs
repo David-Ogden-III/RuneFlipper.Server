@@ -1,13 +1,12 @@
 ﻿using DataAccessLayer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Models;
 using Models.DataTransferObjects;
 using Models.Entities;
+using Models.TradeFactory;
 using System.Linq.Expressions;
 using System.Security.Claims;
-using System.Threading.Channels;
-using Models;
-using Models.TradeFactory;
 
 namespace Controllers;
 
@@ -87,7 +86,7 @@ public class TradeController(RuneFlipperContext context) : ControllerBase
             if (item == null || item.ModeId != character.ModeId) return BadRequest();
 
 
-            Trade trade = _objectMapper.CreateNewTrade(newTrade);
+            Trade trade = ObjectMapper.CreateNewTrade(newTrade);
             _unitOfWork.TradeRepository.Insert(trade);
             bool success = await _unitOfWork.SaveAsync() == 1;
 
@@ -116,7 +115,7 @@ public class TradeController(RuneFlipperContext context) : ControllerBase
             }
 
             await _unitOfWork.SaveAsync();
-            
+
             return Created();
         }
         catch
@@ -133,7 +132,7 @@ public class TradeController(RuneFlipperContext context) : ControllerBase
             var authedUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             // Make sure trade exists and authed user owns the character that owns the trade
-            Expression<Func<Trade, bool>>[] filters = [ trade => trade.Id == updateTradeRequest.Id ];
+            Expression<Func<Trade, bool>>[] filters = [trade => trade.Id == updateTradeRequest.Id];
             string[] tablesToJoin = [nameof(Trade.Character), nameof(Trade.BuyType), nameof(Trade.SellType), nameof(Trade.Item)];
             var originalTrade = await _unitOfWork.TradeRepository.GetAsync(filters, tablesToJoin);
             if (originalTrade is null) return NotFound("Trade Not Found");
@@ -155,8 +154,8 @@ public class TradeController(RuneFlipperContext context) : ControllerBase
                 if (item == null) return NotFound("Item Not Found");
                 if (item.ModeId != character.ModeId) return BadRequest("Item mode does not match character mode");
             }
-            
-            Trade updatedTrade = _objectMapper.UpdateExistingTrade(originalTrade, updateTradeRequest);
+
+            Trade updatedTrade = ObjectMapper.UpdateExistingTrade(originalTrade, updateTradeRequest);
 
             _unitOfWork.TradeRepository.Update(updatedTrade);
 
@@ -182,7 +181,7 @@ public class TradeController(RuneFlipperContext context) : ControllerBase
             var authedUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (authedUserId != userId) return Forbid();
 
-            List<Expression<Func<Trade, bool>>> filters = [ trade => trade.Id == tradeId, trade => trade.Character.UserId == userId ];
+            List<Expression<Func<Trade, bool>>> filters = [trade => trade.Id == tradeId, trade => trade.Character.UserId == userId];
             List<string> tablesToJoin =
                 [nameof(Trade.Character), nameof(Trade.BuyType), nameof(Trade.SellType), nameof(Trade.Item)];
 

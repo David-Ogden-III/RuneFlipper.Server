@@ -94,7 +94,7 @@ public class ObjectMapper
         return tradeSummaries;
     }
 
-    public Trade CreateNewTrade(NewTrade request)
+    public static Trade CreateNewTrade(NewTrade request)
     {
         Trade newTrade = new()
         {
@@ -139,7 +139,7 @@ public class ObjectMapper
         return newTrades;
     }
 
-    public Trade UpdateExistingTrade(Trade existingTrade, UpdateTradeRequest request)
+    public static Trade UpdateExistingTrade(Trade existingTrade, UpdateTradeRequest request)
     {
         existingTrade.CharacterId = request.CharacterId;
         existingTrade.ItemId = request.ItemId;

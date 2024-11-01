@@ -28,7 +28,7 @@ public class ObjectMapperTest
     [InlineData(2)]
     public void CreateRoleResponses_IndexToCompare_NameMatchesInput(int index)
     {
-        IdentityRole[] roles = new IdentityRole[index + 1];
+        var roles = new IdentityRole[index + 1];
         for (int i = 0; i < index + 1; i++)
         {
             roles[i] = new IdentityRole

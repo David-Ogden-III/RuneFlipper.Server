@@ -1,10 +1,10 @@
-using System.Text.Json.Serialization;
 using DataAccessLayer;
 using MailService;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Models.Entities;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 

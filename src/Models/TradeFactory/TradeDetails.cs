@@ -16,7 +16,7 @@ public abstract class TradeDetails(Trade trade) : TradeCalculations
     public long TaxPerItem => CalculateTaxPerItem(SellPrice, trade.Item.InGameId);
     public long TotalTax => CalculateTotalSalesTax(SellPrice, Quantity, trade.Item.InGameId);
     public bool IsComplete { get; set; } = trade.IsComplete;
-    
+
     public ItemResponse Item { get; set; } = new()
     {
         Id = trade.ItemId,
