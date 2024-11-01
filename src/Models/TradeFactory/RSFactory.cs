@@ -2,7 +2,7 @@
 using Models.Entities;
 
 namespace Models.TradeFactory;
-public class RSFactory() : IModeFactory
+public class RSFactory : IModeFactory
 {
     public TradeDetails CreateDetailedTrade(Trade trade)
     {
