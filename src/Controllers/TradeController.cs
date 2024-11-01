@@ -5,6 +5,7 @@ using Models.DataTransferObjects;
 using Models.Entities;
 using System.Linq.Expressions;
 using System.Security.Claims;
+using System.Threading.Channels;
 using Models;
 using Models.TradeFactory;
 
@@ -65,7 +66,8 @@ public class TradeController(RuneFlipperContext context) : ControllerBase
         var trades = await _unitOfWork.TradeRepository.GetListAsync(filters: filters, tablesToJoin: tablesToJoin);
 
         List<TradeSummary> response = _objectMapper.CreateTradeSummaries(trades).ToList();
-
+        Console.WriteLine(nameof(Models.Entities.User));
+        Console.WriteLine(nameof(Item));
         return Ok(response);
     }
 
@@ -79,6 +81,7 @@ public class TradeController(RuneFlipperContext context) : ControllerBase
                 [character => character.Id == newTrade.CharacterId]);
             if (character == null || character.UserId != authedUserId) return BadRequest();
 
+            if (newTrade.BuyDateTime > newTrade.SellDateTime || newTrade.Quantity <= 0) return BadRequest();
 
             var item = await _unitOfWork.ItemRepository.GetAsync([item => item.Id == newTrade.ItemId]);
             if (item == null || item.ModeId != character.ModeId) return BadRequest();
@@ -99,33 +102,60 @@ public class TradeController(RuneFlipperContext context) : ControllerBase
         }
     }
 
-    [HttpPut("{userId}")]
-    public async Task<ActionResult<TradeSummary>> Update(string userId, UpdateTradeRequest updateTradeRequest)
+
+    [HttpPost("CreateTrades"), Authorize(Roles = "Owner, Admin")]
+    public async Task<ActionResult> CreateTrades(ICollection<NewTrade> newTrades)
     {
         try
         {
-            // Checks if character from request exists. Checks if logged-in user owns the character. Checks that userId path is the same as the logged-in user
+            var trades = ObjectMapper.CreateNewTrades(newTrades);
+
+            foreach (Trade trade in trades)
+            {
+                _unitOfWork.TradeRepository.Insert(trade);
+            }
+
+            await _unitOfWork.SaveAsync();
+            
+            return Created();
+        }
+        catch
+        {
+            return BadRequest();
+        }
+    }
+
+    [HttpPut("EditTrade")]
+    public async Task<ActionResult<TradeSummary>> Update(UpdateTradeRequest updateTradeRequest)
+    {
+        try
+        {
             var authedUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var character = await _unitOfWork.CharacterRepository.GetAsync(filters:
-                [character => character.Id == updateTradeRequest.CharacterId]);
-            if (character == null || character.UserId != authedUserId || authedUserId != userId) return BadRequest();
+
+            // Make sure trade exists and authed user owns the character that owns the trade
+            Expression<Func<Trade, bool>>[] filters = [ trade => trade.Id == updateTradeRequest.Id ];
+            string[] tablesToJoin = [nameof(Trade.Character), nameof(Trade.BuyType), nameof(Trade.SellType), nameof(Trade.Item)];
+            var originalTrade = await _unitOfWork.TradeRepository.GetAsync(filters, tablesToJoin);
+            if (originalTrade is null) return NotFound("Trade Not Found");
+            if (originalTrade.Character.UserId != authedUserId) return Forbid();
+
+            if (updateTradeRequest.Quantity <= 0) return BadRequest("Quantity must be greater than 0");
+            if (updateTradeRequest.BuyDateTime > updateTradeRequest.SellDateTime) return BadRequest("Purchase time must be before sale time");
 
 
-            // Checks to make sure that the Characters mode is the same as the item mode
-            var item = await _unitOfWork.ItemRepository.GetAsync([item => item.Id == updateTradeRequest.ItemId]);
-            if (item == null || item.ModeId != character.ModeId) return BadRequest();
+            // If character or Item changes, make sure new character/item exists, authed user owns the new character, and character mode == item mode
+            if (originalTrade.CharacterId != updateTradeRequest.CharacterId || originalTrade.ItemId != updateTradeRequest.ItemId)
+            {
+                var character = await _unitOfWork.CharacterRepository.GetAsync(filters:
+                    [character => character.Id == updateTradeRequest.CharacterId]);
+                if (character == null) return NotFound("Character Not Found");
+                if (character.UserId != authedUserId) return Forbid();
 
-
-            List<Expression<Func<Trade, bool>>> filters =
-            [
-                trade => trade.Id == updateTradeRequest.Id,
-                trade => trade.CharacterId == updateTradeRequest.CharacterId
-            ];
-            var originalTrade = await _unitOfWork.TradeRepository.GetAsync(filters);
-            if (originalTrade is null || originalTrade.CharacterId != updateTradeRequest.CharacterId) return BadRequest(); // Checks to see if trade exists and is owned by the supplied character
-
-            var newItem = _unitOfWork.ItemRepository.GetAsync([item => item.Id == updateTradeRequest.ItemId]);
-
+                var item = await _unitOfWork.ItemRepository.GetAsync([item => item.Id == updateTradeRequest.ItemId]);
+                if (item == null) return NotFound("Item Not Found");
+                if (item.ModeId != character.ModeId) return BadRequest("Item mode does not match character mode");
+            }
+            
             Trade updatedTrade = _objectMapper.UpdateExistingTrade(originalTrade, updateTradeRequest);
 
             _unitOfWork.TradeRepository.Update(updatedTrade);
@@ -152,8 +182,9 @@ public class TradeController(RuneFlipperContext context) : ControllerBase
             var authedUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (authedUserId != userId) return Forbid();
 
-            List<Expression<Func<Trade, bool>>> filters = [trade => trade.Id == tradeId];
-            List<string> tablesToJoin = [nameof(Trade.Character)];
+            List<Expression<Func<Trade, bool>>> filters = [ trade => trade.Id == tradeId, trade => trade.Character.UserId == userId ];
+            List<string> tablesToJoin =
+                [nameof(Trade.Character), nameof(Trade.BuyType), nameof(Trade.SellType), nameof(Trade.Item)];
 
             var trade = await _unitOfWork.TradeRepository.GetAsync(filters, tablesToJoin);
 

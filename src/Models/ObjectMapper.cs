@@ -114,6 +114,31 @@ public class ObjectMapper
         return newTrade;
     }
 
+    public static ICollection<Trade> CreateNewTrades(ICollection<NewTrade> requests)
+    {
+        List<Trade> newTrades = [];
+
+        foreach (NewTrade request in requests)
+        {
+            Trade newTrade = new()
+            {
+                Id = Guid.NewGuid().ToString(),
+                CharacterId = request.CharacterId,
+                ItemId = request.ItemId,
+                BuyTypeId = request.BuyTypeId,
+                BuyPrice = request.BuyPrice,
+                BuyDateTime = request.BuyDateTime,
+                SellTypeId = request.SellTypeId,
+                SellPrice = request.SellPrice,
+                Quantity = request.Quantity,
+                SellDateTime = request.SellDateTime,
+                IsComplete = request.IsComplete
+            };
+            newTrades.Add(newTrade);
+        }
+        return newTrades;
+    }
+
     public Trade UpdateExistingTrade(Trade existingTrade, UpdateTradeRequest request)
     {
         existingTrade.CharacterId = request.CharacterId;
