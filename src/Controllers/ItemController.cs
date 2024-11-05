@@ -201,7 +201,7 @@ public class ItemController(RuneFlipperContext context) : ControllerBase
         bool isValid = newItem.InGameId > 0;
         isValid = isValid && !string.IsNullOrWhiteSpace(newItem.Name);
         isValid = isValid && !string.IsNullOrWhiteSpace(newItem.Description);
-        isValid = isValid && newItem.TradeLimit > 0;
+        isValid = isValid && newItem.TradeLimit >= 0;
         isValid = isValid && !string.IsNullOrWhiteSpace(newItem.ModeId);
 
         return isValid;
