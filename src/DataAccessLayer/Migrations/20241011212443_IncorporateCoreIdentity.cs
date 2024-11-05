@@ -3,7 +3,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace RuneFlipper.Server.Migrations
+namespace DataAccessLayer.Migrations
 {
     /// <inheritdoc />
     public partial class IncorporateCoreIdentity : Migration

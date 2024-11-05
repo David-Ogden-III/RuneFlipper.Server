@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace RuneFlipper.Server.Migrations
+namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(RuneFlipperContext))]
     [Migration("20241011204802_initialMigration")]

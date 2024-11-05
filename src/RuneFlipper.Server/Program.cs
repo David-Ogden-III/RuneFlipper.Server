@@ -4,18 +4,23 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Models.Entities;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var connectionString = builder.Configuration.GetConnectionString("RuneFlipperDb");
 
-builder.Services.AddDbContext<RuneFlipperContext>(options =>
-                options.UseNpgsql(connectionString));
+builder.Services.AddDbContext<RuneFlipperContext>(
+    options =>
+        options.UseNpgsql(
+            connectionString,
+            x => x.MigrationsAssembly("DataAccessLayer")));
 
 builder.Services.AddIdentityApiEndpoints<User>()
     .AddRoles<IdentityRole>()

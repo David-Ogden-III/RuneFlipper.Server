@@ -25,7 +25,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RuneFlipper.Server.Test", "
 		{929B73D0-363B-45ED-9A81-E06470F5A65A} = {929B73D0-363B-45ED-9A81-E06470F5A65A}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccessLayer", "src\DataAccessLayer\DataAccessLayer.csproj", "{929B73D0-363B-45ED-9A81-E06470F5A65A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataAccessLayer", "src\DataAccessLayer\DataAccessLayer.csproj", "{929B73D0-363B-45ED-9A81-E06470F5A65A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

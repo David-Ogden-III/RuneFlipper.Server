@@ -6,55 +6,62 @@ namespace Models.Entities;
 [Table("trades")]
 public partial class Trade
 {
-    [Key]
-    [Column("id")]
-    public string Id { get; init; } = null!;
+    [Key, Column("id"), StringLength(36)]
+    public string Id { get; set; } = null!;
+
 
     [Column("buyprice")]
-    public long BuyPrice { get; init; }
+    public long BuyPrice { get; set; }
+
 
     [Column("sellprice")]
-    public long SellPrice { get; init; }
+    public long SellPrice { get; set; }
+
 
     [Column("quantity")]
-    public int Quantity { get; init; }
+    public int Quantity { get; set; }
 
-    [Column("buydatetime", TypeName = "timestamp without time zone")]
-    public DateTime BuyDateTime { get; init; }
 
-    [Column("selldatetime", TypeName = "timestamp without time zone")]
-    public DateTime SellDateTime { get; init; }
+    [Column("buydatetime", TypeName = "timestamp with time zone")]
+    public DateTime BuyDateTime { get; set; }
+
+
+    [Column("selldatetime", TypeName = "timestamp with time zone")]
+    public DateTime SellDateTime { get; set; }
+
 
     [Column("iscomplete")]
-    public bool IsComplete { get; init; }
+    public bool IsComplete { get; set; }
 
-    [Column("characterid")]
-    public string CharacterId { get; init; } = null!;
 
-    [Column("itemid")]
-    public string ItemId { get; init; } = null!;
+    [Column("characterid"), StringLength(36)]
+    public string CharacterId { get; set; } = null!;
 
-    [Column("buytypeid")]
-    [StringLength(3)]
-    public string BuyTypeId { get; init; } = null!;
 
-    [Column("selltypeid")]
-    [StringLength(3)]
-    public string SellTypeId { get; init; } = null!;
+    [Column("itemid"), StringLength(36)]
+    public string ItemId { get; set; } = null!;
 
-    [ForeignKey("BuyTypeId")]
-    [InverseProperty("Trades")]
-    public virtual BuyType BuyType { get; init; } = null!;
 
-    [ForeignKey("CharacterId")]
-    [InverseProperty("Trades")]
-    public virtual Character Character { get; init; } = null!;
+    [Column("buytypeid"), StringLength(3)]
+    public string BuyTypeId { get; set; } = null!;
 
-    [ForeignKey("ItemId")]
-    [InverseProperty("Trades")]
-    public virtual Item Item { get; init; } = null!;
 
-    [ForeignKey("SellTypeId")]
-    [InverseProperty("Trades")]
-    public virtual SellType SellType { get; init; } = null!;
+    [Column("selltypeid"), StringLength(3)]
+    public string SellTypeId { get; set; } = null!;
+
+
+    [ForeignKey("BuyTypeId"), InverseProperty("Trades")]
+    public virtual BuyType BuyType { get; set; } = null!;
+
+
+    [ForeignKey("CharacterId"), InverseProperty("Trades")]
+    public virtual Character Character { get; set; } = null!;
+
+
+    [ForeignKey("ItemId"), InverseProperty("Trades")]
+    public virtual Item Item { get; set; } = null!;
+
+
+    [ForeignKey("SellTypeId"), InverseProperty("Trades")]
+    public virtual SellType SellType { get; set; } = null!;
 }
