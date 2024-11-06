@@ -11,10 +11,10 @@ public class ObjectMapperTest
     [InlineData(2)]
     public void CreateRoleResponses_ArrayLength_NotEmpty(int length)
     {
-        List<IdentityRole> roles = [];
+        IdentityRole[] roles = new IdentityRole[length];
         for (int i = 0; i < length; i++)
         {
-            roles.Add(new IdentityRole());
+            roles[i] = (new IdentityRole());
         }
 
         var responses = ObjectMapper.CreateRoleResponses(roles);
@@ -28,7 +28,7 @@ public class ObjectMapperTest
     [InlineData(2)]
     public void CreateRoleResponses_IndexToCompare_NameMatchesInput(int index)
     {
-        var roles = new IdentityRole[index + 1];
+        IdentityRole[] roles = new IdentityRole[index + 1];
         for (int i = 0; i < index + 1; i++)
         {
             roles[i] = new IdentityRole
@@ -40,5 +40,13 @@ public class ObjectMapperTest
         var responses = ObjectMapper.CreateRoleResponses(roles).ToArray();
 
         Assert.Equal(responses[index].Name, index.ToString());
+    }
+
+    [Fact]
+    public void GetInstance_ObjectMapperNotInstantiated_ReturnsInstance()
+    {
+        ObjectMapper objectMapper = ObjectMapper.GetInstance();
+
+        Assert.NotNull(objectMapper);
     }
 }
