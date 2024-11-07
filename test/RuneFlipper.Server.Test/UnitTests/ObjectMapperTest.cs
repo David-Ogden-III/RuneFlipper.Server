@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Models;
 
-namespace RuneFlipper.Server.Test;
+namespace RuneFlipper.Server.Test.UnitTests;
 
 public class ObjectMapperTest
 {
@@ -14,7 +14,7 @@ public class ObjectMapperTest
         IdentityRole[] roles = new IdentityRole[length];
         for (int i = 0; i < length; i++)
         {
-            roles[i] = (new IdentityRole());
+            roles[i] = new IdentityRole();
         }
 
         var responses = ObjectMapper.CreateRoleResponses(roles);

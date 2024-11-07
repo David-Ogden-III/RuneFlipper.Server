@@ -5,7 +5,7 @@ using Models.Entities;
 using System.Linq.Expressions;
 using Microsoft.AspNetCore.Identity;
 
-namespace RuneFlipper.Server.Test;
+namespace RuneFlipper.Server.Test.IntegrationTests;
 
 public class DataAccessLayerTest
 {
