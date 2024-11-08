@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Models;
+using Models.DataTransferObjects;
+using Models.Entities;
 
 namespace RuneFlipper.Server.Test.UnitTests;
 
@@ -48,5 +50,27 @@ public class ObjectMapperTest
         ObjectMapper objectMapper = ObjectMapper.GetInstance();
 
         Assert.NotNull(objectMapper);
+    }
+
+    [Fact]
+    public void CreateNewTrade_InputNewTrade_TradeNotNull()
+    {
+        NewTrade newTrade = new()
+        {
+            CharacterId = "CharacterId",
+            ItemId = "ItemId",
+            BuyTypeId = "BuyTypeId",
+            SellTypeId = "SellTypeId",
+            BuyPrice = 100,
+            SellPrice = 120,
+            Quantity = 10,
+            IsComplete = true,
+            BuyDateTime = DateTime.Now,
+            SellDateTime = DateTime.Now + TimeSpan.FromHours(1)
+        };
+
+        Trade trade = ObjectMapper.CreateNewTrade(newTrade);
+
+        Assert.NotNull(trade);
     }
 }
