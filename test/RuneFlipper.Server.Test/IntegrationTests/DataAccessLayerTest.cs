@@ -330,6 +330,6 @@ public class DataAccessLayerTest
     {
         Id = "RoleId",
         Name = "Admin",
-        NormalizedName = "ADMIN",
+        NormalizedName = "ADMIN"
     };
 }
