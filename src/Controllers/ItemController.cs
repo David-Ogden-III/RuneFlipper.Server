@@ -16,20 +16,22 @@ public class ItemController(RuneFlipperContext context) : ControllerBase
     private readonly UnitOfWork _unitOfWork = new(context);
 
 
-    [HttpGet("SearchByModeAndName/{modeId}")]
+    [HttpGet("SearchByModeAndName")]
     public async Task<ActionResult<ICollection<ItemResponse>>> Get(string modeId, string itemName)
     {
-        string normalizedItemName = itemName.Trim().ToLower();
+        string normalizedItemName = itemName.Trim() + "%";
 
         if (normalizedItemName.Length < 3) return BadRequest("Input must be longer than 3 characters");
 
         List<Expression<Func<Item, bool>>> filters =
         [
             item => item.ModeId == modeId,
-            item => EF.Functions.Like(item.Name.ToLower(), $"%{normalizedItemName}%")
+            item => EF.Functions.ILike(item.Name, $"%{normalizedItemName}")
         ];
 
-        var items = await _unitOfWork.ItemRepository.GetListAsync(filters: filters);
+        Func<IQueryable<Item>, IOrderedQueryable<Item>> orderBy = queryable => queryable.OrderByDescending(item => EF.Functions.ILike(item.Name, $"{normalizedItemName}"));
+
+        var items = await _unitOfWork.ItemRepository.GetListAsync(filters: filters, orderBy: orderBy, limit: 10);
 
         List<ItemResponse> response = [];
         foreach (Item item in items)
