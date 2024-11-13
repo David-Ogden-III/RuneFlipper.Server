@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Models.DataTransferObjects;
 using Models.Entities;
 using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 
 namespace Controllers;
 
@@ -15,28 +16,22 @@ public class ItemController(RuneFlipperContext context) : ControllerBase
     private readonly UnitOfWork _unitOfWork = new(context);
 
 
-    [HttpGet("{modeId}")]
-    public async Task<ActionResult<ICollection<ItemResponse>>> Get(string modeId, string? itemId, string? itemName)
+    [HttpGet("SearchByModeAndName")]
+    public async Task<ActionResult<ICollection<ItemResponse>>> Get(string modeId, string itemName)
     {
+        string normalizedItemName = itemName.Trim() + "%";
+
+        if (normalizedItemName.Length < 3) return BadRequest("Input must be longer than 3 characters");
+
         List<Expression<Func<Item, bool>>> filters =
         [
-            item => item.ModeId == modeId
+            item => item.ModeId == modeId,
+            item => EF.Functions.ILike(item.Name, $"%{normalizedItemName}")
         ];
 
-        bool idIsNull = string.IsNullOrWhiteSpace(itemId);
+        Func<IQueryable<Item>, IOrderedQueryable<Item>> orderBy = queryable => queryable.OrderByDescending(item => EF.Functions.ILike(item.Name, $"{normalizedItemName}"));
 
-        if (!idIsNull)
-        {
-            filters.Add(item => item.Id == itemId);
-        }
-
-
-        var items = await _unitOfWork.ItemRepository.GetListAsync(filters: filters);
-
-        if (!string.IsNullOrWhiteSpace(itemName) && idIsNull)
-        {
-            items = items.Where(item => item.Name.Contains(itemName, StringComparison.InvariantCultureIgnoreCase)).ToList();
-        }
+        var items = await _unitOfWork.ItemRepository.GetListAsync(filters: filters, orderBy: orderBy, limit: 10);
 
         List<ItemResponse> response = [];
         foreach (Item item in items)
@@ -54,6 +49,33 @@ public class ItemController(RuneFlipperContext context) : ControllerBase
             };
             response.Add(itemResponse);
         }
+
+        return Ok(response);
+    }
+
+    [HttpGet("FindById/{itemId}")]
+    public async Task<ActionResult<ItemResponse>> GetById(string itemId)
+    {
+        List<Expression<Func<Item, bool>>> filters =
+        [
+            item => item.Id == itemId
+        ];
+
+        var item = await _unitOfWork.ItemRepository.GetAsync(filters: filters);
+
+        if (item is null) return NotFound();
+
+        ItemResponse response = new()
+        {
+            Id = item.Id,
+            InGameId = item.InGameId,
+            Name = item.Name,
+            Description = item.Description,
+            MembersOnly = item.MembersOnly,
+            TradeLimit = item.TradeLimit,
+            ModeId = item.ModeId
+
+        };
 
         return Ok(response);
     }
