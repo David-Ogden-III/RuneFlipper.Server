@@ -9,7 +9,8 @@ public class GenericRepository<TEntity>(RuneFlipperContext context) where TEntit
 
     public async Task<ICollection<TEntity>> GetListAsync(ICollection<Expression<Func<TEntity, bool>>>? filters = null,
         ICollection<string>? tablesToJoin = null,
-        Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null)
+        Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
+        int? limit = null)
     {
         IQueryable<TEntity> query = _dbSet;
 
@@ -29,15 +30,17 @@ public class GenericRepository<TEntity>(RuneFlipperContext context) where TEntit
             }
         }
 
-        List<TEntity> result;
         if (orderBy != null)
         {
-            result = await orderBy(query).ToListAsync();
+            query = orderBy(query);
         }
-        else
+
+        if (limit != null)
         {
-            result = await query.ToListAsync();
+            query = query.Take((int)limit);
         }
+
+        List<TEntity> result = await query.ToListAsync();
 
         return result;
     }
