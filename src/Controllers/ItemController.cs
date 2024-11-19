@@ -1,10 +1,10 @@
 ﻿using DataAccessLayer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Models.DataTransferObjects;
 using Models.Entities;
 using System.Linq.Expressions;
-using Microsoft.EntityFrameworkCore;
 
 namespace Controllers;
 
@@ -21,7 +21,10 @@ public class ItemController(RuneFlipperContext context) : ControllerBase
     {
         string normalizedItemName = itemName.Trim() + "%";
 
-        if (normalizedItemName.Length < 3) return BadRequest("Input must be longer than 3 characters");
+        if (normalizedItemName.Length < 3)
+        {
+            return BadRequest("Input must be longer than 3 characters");
+        }
 
         List<Expression<Func<Item, bool>>> filters =
         [
@@ -29,9 +32,12 @@ public class ItemController(RuneFlipperContext context) : ControllerBase
             item => EF.Functions.ILike(item.Name, $"%{normalizedItemName}")
         ];
 
-        Func<IQueryable<Item>, IOrderedQueryable<Item>> orderBy = queryable => queryable.OrderByDescending(item => EF.Functions.ILike(item.Name, $"{normalizedItemName}"));
+        Func<IQueryable<Item>, IOrderedQueryable<Item>> orderBy =
+            queryable => queryable.OrderByDescending(item => 
+                EF.Functions.ILike(item.Name, $"{normalizedItemName}"));
 
-        var items = await _unitOfWork.ItemRepository.GetListAsync(filters: filters, orderBy: orderBy, limit: 10);
+        var items =
+            await _unitOfWork.ItemRepository.GetListAsync(filters: filters, orderBy: orderBy, limit: 10);
 
         List<ItemResponse> response = [];
         foreach (Item item in items)
