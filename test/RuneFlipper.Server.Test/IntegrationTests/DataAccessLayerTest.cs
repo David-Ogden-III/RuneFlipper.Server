@@ -1,9 +1,9 @@
 ﻿using DataAccessLayer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Models.Entities;
 using System.Linq.Expressions;
-using Microsoft.AspNetCore.Identity;
 
 namespace RuneFlipper.Server.Test.IntegrationTests;
 
