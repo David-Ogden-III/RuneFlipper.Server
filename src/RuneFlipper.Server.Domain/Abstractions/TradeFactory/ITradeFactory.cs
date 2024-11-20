@@ -2,7 +2,7 @@
 
 namespace RuneFlipper.Server.Domain.Abstractions.TradeFactory;
 
-public interface IModeFactory
+public interface ITradeFactory
 {
     TradeDetails CreateDetailedTrade(Trade trade);
     TradeSummary CreateTradeSummary(Trade trade);

@@ -20,7 +20,7 @@ builder.Services.AddDbContext<RuneFlipperContext>(
     options =>
         options.UseNpgsql(
             connectionString,
-            x => x.MigrationsAssembly("DataAccessLayer")));
+            x => x.MigrationsAssembly("RuneFlipper.Server.Infrastructure")));
 
 builder.Services.AddIdentityApiEndpoints<User>()
     .AddRoles<IdentityRole>()

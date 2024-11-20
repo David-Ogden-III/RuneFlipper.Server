@@ -3,15 +3,15 @@ using RuneFlipper.Server.Domain.Abstractions.TradeFactory;
 using RuneFlipper.Server.Domain.Entities;
 
 namespace RuneFlipper.Server.Application.Trades.Factory;
-public class RSFactory : IModeFactory
+public class RuneScapeTradeFactory : ITradeFactory
 {
     public TradeDetails CreateDetailedTrade(Trade trade)
     {
-        return new RSTradeDetails(trade);
+        return new RuneScapeTradeDetails(trade);
     }
 
     public TradeSummary CreateTradeSummary(Trade trade)
     {
-        return new RSTradeSummary(trade);
+        return new RuneScapeTradeSummary(trade);
     }
 }

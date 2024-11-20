@@ -27,22 +27,22 @@ public class ObjectMapper
         return _instance;
     }
 
-    private RSFactory? _rSFactory;
-    private OSFactory? _oSFactory;
+    private RuneScapeTradeFactory? _rSFactory;
+    private OldSchoolTradeFactory? _oSFactory;
 
-    private RSFactory RSFactory
+    private RuneScapeTradeFactory RuneScapeTradeFactory
     {
         get
         {
-            _rSFactory ??= new RSFactory();
+            _rSFactory ??= new RuneScapeTradeFactory();
             return _rSFactory;
         }
     }
-    private OSFactory OSFactory
+    private OldSchoolTradeFactory OldSchoolTradeFactory
     {
         get
         {
-            _oSFactory ??= new OSFactory();
+            _oSFactory ??= new OldSchoolTradeFactory();
             return _oSFactory;
         }
     }
@@ -169,17 +169,17 @@ public class ObjectMapper
         return responseObjects;
     }
 
-    private IModeFactory? FactorySelector(Trade trade)
+    private ITradeFactory? FactorySelector(Trade trade)
     {
-        IModeFactory? factory;
+        ITradeFactory? factory;
 
         switch (trade.Item.ModeId)
         {
             case "OSRS":
-                factory = OSFactory;
+                factory = OldSchoolTradeFactory;
                 break;
             case "RS":
-                factory = RSFactory;
+                factory = RuneScapeTradeFactory;
                 break;
             default:
                 factory = null;

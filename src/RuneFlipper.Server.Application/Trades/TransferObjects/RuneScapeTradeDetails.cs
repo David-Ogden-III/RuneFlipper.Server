@@ -6,11 +6,13 @@ using RuneFlipper.Server.Domain.Abstractions.TradeFactory;
 using RuneFlipper.Server.Domain.Entities;
 
 namespace RuneFlipper.Server.Application.Trades.TransferObjects;
-public class OSTradeDetails(Trade trade) : TradeDetails(trade)
+public class RuneScapeTradeDetails(Trade trade) : TradeDetails(trade)
 {
-    protected override double TaxRate => Constants.OSTaxRate;
-    protected override int[] TaxExemptIds => Constants.OSTaxExemptIds;
-    protected override long MaxTaxPerItem => Constants.OSMaxTaxPerItem;
+    protected override double TaxRate => Constants.RuneScapeTaxRate;
+    protected override int[] TaxExemptIds => Constants.RuneScapeTaxExemptIds;
+    protected override long MaxTaxPerItem => Constants.RuneScapeMaxTaxPerItem;
+
+
     public override IItemResponse Item { get; set; } = new ItemResponse()
     {
         Id = trade.ItemId,
