@@ -133,16 +133,25 @@ public class TradeController(RuneFlipperContext context) : ControllerBase
 
             // Make sure trade exists and authed user owns the character that owns the trade
             Expression<Func<Trade, bool>>[] filters = [trade => trade.Id == updateTradeRequest.Id];
-            string[] tablesToJoin = [nameof(Trade.Character), nameof(Trade.BuyType), nameof(Trade.SellType), nameof(Trade.Item)];
+            string[] tablesToJoin =
+                [nameof(Trade.Character), nameof(Trade.BuyType), nameof(Trade.SellType), nameof(Trade.Item)];
             var originalTrade = await _unitOfWork.TradeRepository.GetAsync(filters, tablesToJoin);
             if (originalTrade is null) return NotFound("Trade Not Found");
             if (originalTrade.Character.UserId != authedUserId) return Forbid();
 
-            if (updateTradeRequest.Quantity <= 0) return BadRequest("Quantity must be greater than 0");
-            if (updateTradeRequest.BuyDateTime > updateTradeRequest.SellDateTime) return BadRequest("Purchase time must be before sale time");
+            if (updateTradeRequest.Quantity <= 0)
+            {
+                return BadRequest("Quantity must be greater than 0");
+            }
+
+            if (updateTradeRequest.BuyDateTime > updateTradeRequest.SellDateTime)
+            {
+                return BadRequest("Purchase time must be before sale time");
+            }
 
 
-            // If character or Item changes, make sure new character/item exists, authed user owns the new character, and character mode == item mode
+            // If character or Item changes:
+            // make sure new character/item exists, authed user owns the new character, and character mode == item mode
             if (originalTrade.CharacterId != updateTradeRequest.CharacterId || originalTrade.ItemId != updateTradeRequest.ItemId)
             {
                 var character = await _unitOfWork.CharacterRepository.GetAsync(filters:
