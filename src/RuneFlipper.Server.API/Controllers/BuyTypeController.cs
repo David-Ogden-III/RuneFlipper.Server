@@ -64,7 +64,7 @@ public class BuyTypeController(RuneFlipperContext context) : ControllerBase
     {
         try
         {
-            var buyTypeToDelete = await _unitOfWork.BuyTypeRepository.GetAsync(filters: [buyType => buyType.Id == buyTypeId]);
+            var buyTypeToDelete = await _unitOfWork.BuyTypeRepository.GetByIdAsync(buyTypeId);
 
             if (buyTypeToDelete == null) return NotFound();
 
