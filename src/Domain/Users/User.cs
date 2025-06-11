@@ -1,4 +1,5 @@
-﻿using Domain.Permissions;
+﻿using Domain.Characters;
+using Domain.Permissions;
 using SharedKernel;
 
 namespace Domain.Users;
@@ -11,7 +12,8 @@ public sealed class User : Entity
     public string LastName { get; set; }
     public string PasswordHash { get; set; }
 
-    public IReadOnlyCollection<Permission> Permissions => _permissions.ToList();
+    public ICollection<Character> Characters { get; set; } = [];
+    public IReadOnlyCollection<Permission> Permissions => [.. _permissions];
 
     private readonly List<Permission> _permissions = [];
 }

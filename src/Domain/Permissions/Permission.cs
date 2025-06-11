@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Domain.Users;
+﻿using Domain.Users;
 
 namespace Domain.Permissions;
 public sealed class Permission
