@@ -1,36 +1,4 @@
-# Clean Architecture Template
+# RuneFlipper.Server
 
-What's included in the template?
-
-- SharedKernel project with common Domain-Driven Design abstractions.
-- Domain layer with sample entities.
-- Application layer with abstractions for:
-  - CQRS
-  - Example use cases
-  - Cross-cutting concerns (logging, validation)
-- Infrastructure layer with:
-  - Authentication
-  - Permission authorization
-  - EF Core, PostgreSQL
-  - Serilog
-- Seq for searching and analyzing structured logs
-  - Seq is available at http://localhost:8081 by default
-- Testing projects
-  - Architecture testing
-
-I'm open to hearing your feedback about the template and what you'd like to see in future iterations.
-
-If you're ready to learn more, check out [**Pragmatic Clean Architecture**](https://www.milanjovanovic.tech/pragmatic-clean-architecture?utm_source=ca-template):
-
-- Domain-Driven Design
-- Role-based authorization
-- Permission-based authorization
-- Distributed caching with Redis
-- OpenTelemetry
-- Outbox pattern
-- API Versioning
-- Unit testing
-- Functional testing
-- Integration testing
-
-Stay awesome!
+## Overview
+RuneFlipper.Server is the backend application for the website RuneFlipper. RuneFlipper is designed to help RuneScape players track their sales profits, observe price trends, and make informed trading decisions on the Grand Exchange. Users can monitor item prices over time, view profit trends, and identify ideal trading opportunities. This project originated from a personal need to streamline trading and improve profitability in RuneScape, providing an efficient and data-driven tool for players looking to optimize their in-game transactions.
