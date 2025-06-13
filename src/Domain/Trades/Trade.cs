@@ -14,13 +14,8 @@ public sealed class Trade : Entity
     public DateTime BuyDateTime { get; set; }
     public DateTime SellDateTime { get; set; }
     public bool IsComplete { get; set; }
-    public string CharacterId { get; set; }
-    public string ItemId { get; set; }
-    public string BuyTypeId { get; set; }
-    public string SellTypeId { get; set; }
-
-    public BuyType BuyType { get; set; }
-    public Character Character { get; set; }
-    public Item Item { get; set; }
-    public SellType SellType { get; set; }
+    public Guid CharacterId { get; set; }
+    public int ItemId { get; set; }
+    public int BuyTypeId { get; set; }
+    public int SellTypeId { get; set; }
 }

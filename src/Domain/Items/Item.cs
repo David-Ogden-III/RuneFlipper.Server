@@ -11,7 +11,4 @@ public sealed class Item
     public bool IsMembers { get; set; }
     public int TradeLimit { get; set; }
     public int ModeId { get; set; }
-
-    public Mode Mode { get; set; }
-    public ICollection<Trade> Trades { get; set; } = [];
 }

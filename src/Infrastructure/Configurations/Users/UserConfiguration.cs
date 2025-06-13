@@ -1,4 +1,5 @@
-﻿using Domain.Users;
+﻿using Domain.Characters;
+using Domain.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -11,5 +12,7 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
         builder.HasKey(u => u.Id);
 
         builder.HasIndex(u => u.Email).IsUnique();
+
+        builder.HasMany<Character>().WithOne().HasForeignKey(c => c.UserId);
     }
 }

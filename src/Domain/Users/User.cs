@@ -11,8 +11,8 @@ public sealed class User : Entity
     public string FirstName { get; set; }
     public string LastName { get; set; }
     public string PasswordHash { get; set; }
+    public DateTime CreatedOn { get; set; }
 
-    public ICollection<Character> Characters { get; set; } = [];
     public IReadOnlyCollection<Permission> Permissions => [.. _permissions];
 
     private readonly List<Permission> _permissions = [];

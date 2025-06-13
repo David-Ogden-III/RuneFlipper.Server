@@ -1,9 +1,15 @@
 ﻿using Application.Abstractions.Data;
 using Domain.Todos;
+using Domain.Characters;
+using Domain.Items;
+using Domain.Modes;
+using Domain.SellTypes;
+using Domain.Trades;
 using Domain.Users;
 using Infrastructure.DomainEvents;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel;
+using Domain.BuyTypes;
 
 namespace Infrastructure.Database;
 
@@ -13,8 +19,19 @@ public sealed class ApplicationDbContext(
     : DbContext(options), IApplicationDbContext
 {
     public DbSet<User> Users { get; set; }
+    public DbSet<BuyType> BuyTypes { get; set; }
 
     public DbSet<TodoItem> TodoItems { get; set; }
+
+    public DbSet<Character> Characters { get; set; }
+
+    public DbSet<Item> Items { get; set; }
+
+    public DbSet<Mode> Modes { get; set; }
+
+    public DbSet<SellType> SellTypes { get; set; }
+
+    public DbSet<Trade> Trades { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

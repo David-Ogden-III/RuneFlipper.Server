@@ -24,6 +24,144 @@ namespace Infrastructure.Database.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Domain.BuyTypes.BuyType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("name");
+
+                    b.Property<string>("ShortName")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("short_name");
+
+                    b.HasKey("Id")
+                        .HasName("pk_buy_types");
+
+                    b.HasIndex("ShortName", "Name")
+                        .IsUnique()
+                        .HasDatabaseName("ix_buy_types_short_name_name");
+
+                    b.ToTable("buy_types", "public");
+                });
+
+            modelBuilder.Entity("Domain.Characters.Character", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<bool>("IsMember")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_member");
+
+                    b.Property<int>("ModeId")
+                        .HasColumnType("integer")
+                        .HasColumnName("mode_id");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("name");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_characters");
+
+                    b.HasIndex("ModeId")
+                        .HasDatabaseName("ix_characters_mode_id");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_characters_user_id");
+
+                    b.ToTable("characters", "public");
+                });
+
+            modelBuilder.Entity("Domain.Items.Item", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("description");
+
+                    b.Property<int>("InGameId")
+                        .HasColumnType("integer")
+                        .HasColumnName("in_game_id");
+
+                    b.Property<bool>("IsMembers")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_members");
+
+                    b.Property<int>("ModeId")
+                        .HasColumnType("integer")
+                        .HasColumnName("mode_id");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("name");
+
+                    b.Property<int>("TradeLimit")
+                        .HasColumnType("integer")
+                        .HasColumnName("trade_limit");
+
+                    b.HasKey("Id")
+                        .HasName("pk_items");
+
+                    b.HasIndex("ModeId")
+                        .HasDatabaseName("ix_items_mode_id");
+
+                    b.ToTable("items", "public");
+                });
+
+            modelBuilder.Entity("Domain.Modes.Mode", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("name");
+
+                    b.Property<string>("ShortName")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("short_name");
+
+                    b.HasKey("Id")
+                        .HasName("pk_modes");
+
+                    b.HasIndex("ShortName", "Name")
+                        .IsUnique()
+                        .HasDatabaseName("ix_modes_short_name_name");
+
+                    b.ToTable("modes", "public");
+                });
+
             modelBuilder.Entity("Domain.Permissions.Permission", b =>
                 {
                     b.Property<int>("Id")
@@ -49,6 +187,35 @@ namespace Infrastructure.Database.Migrations
                             Id = 1,
                             Name = "users:access"
                         });
+                });
+
+            modelBuilder.Entity("Domain.SellTypes.SellType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("name");
+
+                    b.Property<string>("ShortName")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("short_name");
+
+                    b.HasKey("Id")
+                        .HasName("pk_sell_types");
+
+                    b.HasIndex("ShortName", "Name")
+                        .IsUnique()
+                        .HasDatabaseName("ix_sell_types_short_name_name");
+
+                    b.ToTable("sell_types", "public");
                 });
 
             modelBuilder.Entity("Domain.Todos.TodoItem", b =>
@@ -101,12 +268,81 @@ namespace Infrastructure.Database.Migrations
                     b.ToTable("todo_items", "public");
                 });
 
+            modelBuilder.Entity("Domain.Trades.Trade", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("BuyDateTime")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("buy_date_time");
+
+                    b.Property<long>("BuyPrice")
+                        .HasColumnType("bigint")
+                        .HasColumnName("buy_price");
+
+                    b.Property<int>("BuyTypeId")
+                        .HasColumnType("integer")
+                        .HasColumnName("buy_type_id");
+
+                    b.Property<Guid>("CharacterId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("character_id");
+
+                    b.Property<bool>("IsComplete")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_complete");
+
+                    b.Property<int>("ItemId")
+                        .HasColumnType("integer")
+                        .HasColumnName("item_id");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer")
+                        .HasColumnName("quantity");
+
+                    b.Property<DateTime>("SellDateTime")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("sell_date_time");
+
+                    b.Property<long>("SellPrice")
+                        .HasColumnType("bigint")
+                        .HasColumnName("sell_price");
+
+                    b.Property<int>("SellTypeId")
+                        .HasColumnType("integer")
+                        .HasColumnName("sell_type_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_trades");
+
+                    b.HasIndex("BuyTypeId")
+                        .HasDatabaseName("ix_trades_buy_type_id");
+
+                    b.HasIndex("CharacterId")
+                        .HasDatabaseName("ix_trades_character_id");
+
+                    b.HasIndex("ItemId")
+                        .HasDatabaseName("ix_trades_item_id");
+
+                    b.HasIndex("SellTypeId")
+                        .HasDatabaseName("ix_trades_sell_type_id");
+
+                    b.ToTable("trades", "public");
+                });
+
             modelBuilder.Entity("Domain.Users.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_on");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -157,6 +393,33 @@ namespace Infrastructure.Database.Migrations
                     b.ToTable("permission_user", "public");
                 });
 
+            modelBuilder.Entity("Domain.Characters.Character", b =>
+                {
+                    b.HasOne("Domain.Modes.Mode", null)
+                        .WithMany()
+                        .HasForeignKey("ModeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_characters_modes_mode_id");
+
+                    b.HasOne("Domain.Users.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_characters_users_user_id");
+                });
+
+            modelBuilder.Entity("Domain.Items.Item", b =>
+                {
+                    b.HasOne("Domain.Modes.Mode", null)
+                        .WithMany()
+                        .HasForeignKey("ModeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_items_modes_mode_id");
+                });
+
             modelBuilder.Entity("Domain.Todos.TodoItem", b =>
                 {
                     b.HasOne("Domain.Users.User", null)
@@ -165,6 +428,37 @@ namespace Infrastructure.Database.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_todo_items_users_user_id");
+                });
+
+            modelBuilder.Entity("Domain.Trades.Trade", b =>
+                {
+                    b.HasOne("Domain.BuyTypes.BuyType", null)
+                        .WithMany()
+                        .HasForeignKey("BuyTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_trades_buy_types_buy_type_id");
+
+                    b.HasOne("Domain.Characters.Character", null)
+                        .WithMany()
+                        .HasForeignKey("CharacterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_trades_characters_character_id");
+
+                    b.HasOne("Domain.Items.Item", null)
+                        .WithMany()
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_trades_items_item_id");
+
+                    b.HasOne("Domain.SellTypes.SellType", null)
+                        .WithMany()
+                        .HasForeignKey("SellTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_trades_sell_types_sell_type_id");
                 });
 
             modelBuilder.Entity("PermissionUser", b =>

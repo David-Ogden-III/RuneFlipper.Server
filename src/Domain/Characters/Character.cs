@@ -12,12 +12,4 @@ public sealed class Character : Entity
     public bool IsMember { get; set; }
     public Guid UserId { get; set; }
     public int ModeId { get; set; }
-    public DateTime CreatedAt { get; set; }
-
-    public IReadOnlyCollection<Permission> Permissions => _permissions.ToList();
-    private readonly List<Permission> _permissions = [];
-
-    public User User { get; set; }
-    public Mode Mode { get; set; }
-    public ICollection<Trade> Trades { get; set; } = [];
 }
