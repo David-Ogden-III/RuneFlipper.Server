@@ -1,8 +1,4 @@
-﻿using Domain.Modes;
-using Domain.Permissions;
-using Domain.Trades;
-using Domain.Users;
-using SharedKernel;
+﻿using SharedKernel;
 
 namespace Domain.Characters;
 public sealed class Character : Entity

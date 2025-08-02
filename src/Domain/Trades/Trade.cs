@@ -1,8 +1,4 @@
-﻿using Domain.BuyTypes;
-using Domain.Characters;
-using Domain.Items;
-using Domain.SellTypes;
-using SharedKernel;
+﻿using SharedKernel;
 
 namespace Domain.Trades;
 public sealed class Trade : Entity

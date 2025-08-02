@@ -1,5 +1,4 @@
-﻿using Domain.Trades;
-using SharedKernel;
+﻿using SharedKernel;
 
 namespace Domain.SellTypes;
 public sealed class SellType : Entity

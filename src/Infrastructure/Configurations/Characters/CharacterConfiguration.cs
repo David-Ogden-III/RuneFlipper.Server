@@ -1,6 +1,5 @@
 ﻿using Domain.Characters;
 using Domain.Modes;
-using Domain.Trades;
 using Domain.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

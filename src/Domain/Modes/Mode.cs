@@ -1,6 +1,4 @@
-﻿using Domain.Characters;
-using Domain.Items;
-using SharedKernel;
+﻿using SharedKernel;
 
 namespace Domain.Modes;
 public sealed class Mode : Entity

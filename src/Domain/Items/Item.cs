@@ -1,7 +1,4 @@
-﻿using Domain.Modes;
-using Domain.Trades;
-
-namespace Domain.Items;
+﻿namespace Domain.Items;
 public sealed class Item
 {
     public int Id { get; set; }

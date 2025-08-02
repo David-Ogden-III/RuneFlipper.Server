@@ -1,5 +1,4 @@
-﻿using Domain.Trades;
-using SharedKernel;
+﻿using SharedKernel;
 
 namespace Domain.BuyTypes;
 public sealed class BuyType : Entity
